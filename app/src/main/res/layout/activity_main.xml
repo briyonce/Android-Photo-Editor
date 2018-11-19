@@ -12,10 +12,12 @@
         android:orientation="vertical"
         android:gravity="center">
         <Button
+            android:id="@+id/photo_gallery_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Photo Gallery"/>
         <Button
+            android:id="@+id/new_photo_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Take New Picture"/>

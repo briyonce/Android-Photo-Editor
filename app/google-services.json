@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "781228927980",
+    "firebase_url": "https://mobile-computing-project.firebaseio.com",
+    "project_id": "mobile-computing-project",
+    "storage_bucket": "mobile-computing-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781228927980:android:f0170a58bd549d7a",
+        "android_client_info": {
+          "package_name": "edu.utexas.cs371m.bmb3377.android_photo_editor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781228927980-6uu4duq108nb14e021a0r5g71bmnqi0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0bbYu_NsN90KXXoWZamU5YazZz3uPaTs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
