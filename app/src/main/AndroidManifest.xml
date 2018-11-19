@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".NewPhoto"
+                android:label="New Photo"
+                android:parentActivityName=".MainActivity" >
+        </activity>
+        <activity android:name=".Gallery"
+                android:label="Photo Gallery"
+                android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

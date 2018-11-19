@@ -22,7 +22,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         public ViewHolder(View view) {
             super(view);
             iv = view.findViewById(R.id.image);
-            tv = view.findViewById(R.id.img_desc);
             view.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view){

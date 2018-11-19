@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity implements
         this.galleryButton = findViewById(R.id.photo_gallery_button);
         this.cameraButton = findViewById(R.id.new_photo_button);
 
-        galleryButton.setOnClickListener(new Button.OnClickListener() {
+        cameraButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openGallery = new Intent(getApplicationContext(), Gallery.class);
+                Intent openGallery = new Intent(getApplicationContext(), NewPhoto.class);
                 startActivity(openGallery);
             }
         });
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements
         auth = Auth.getInstance();
         auth.init(this, this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(auth);
-        
+
     }
 
     public void onAuthStateChanged(FirebaseAuth dontuse) {
