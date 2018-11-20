@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 
-
 /**
  * Created by Radoslav Yankov on 07.12.2017
  * Dev Labs

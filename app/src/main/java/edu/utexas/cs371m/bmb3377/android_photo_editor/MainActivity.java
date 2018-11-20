@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements
         this.galleryButton = findViewById(R.id.photo_gallery_button);
         this.cameraButton = findViewById(R.id.new_photo_button);
 
-        cameraButton.setOnClickListener(new Button.OnClickListener() {
+        cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent openGallery = new Intent(getApplicationContext(), NewPhoto.class);

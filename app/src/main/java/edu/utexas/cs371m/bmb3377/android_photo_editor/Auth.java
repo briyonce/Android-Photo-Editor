@@ -13,7 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
-
+//Code comes from FCFIREDIST. Authored by Professot Emmet Witchel
 public class Auth implements DefaultLifecycleObserver {
 
     // State of authentication
