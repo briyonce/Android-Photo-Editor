@@ -47,7 +47,15 @@ public class MainActivity extends AppCompatActivity implements
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openGallery = new Intent(getApplicationContext(), NewPhoto.class);
+                Intent openCamera = new Intent(getApplicationContext(), NewPhoto.class);
+                startActivity(openCamera);
+            }
+        });
+
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openGallery = new Intent(getApplicationContext(), Gallery.class);
                 startActivity(openGallery);
             }
         });

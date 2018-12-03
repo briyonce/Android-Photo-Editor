@@ -7,7 +7,6 @@ import android.widget.LinearLayout;
 
 public class Gallery extends AppCompatActivity {
 
-    protected LinearLayout cameraLayout;
     protected LinearLayout galleryLayout;
 
     @Override
@@ -15,7 +14,6 @@ public class Gallery extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_gallery);
 
-        cameraLayout = findViewById(R.id.photo_holder);
         galleryLayout = findViewById(R.id.photo_gallery);
 
     }
