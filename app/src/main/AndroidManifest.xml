@@ -21,8 +21,12 @@
                 android:parentActivityName=".MainActivity" >
         </activity>
         <activity android:name=".Gallery"
-                android:label="Photo Gallery"
-                android:parentActivityName=".MainActivity">
+            android:label="Photo Gallery"
+            android:parentActivityName=".MainActivity">
+        </activity>
+        <activity android:name=".Profile"
+            android:label="Profile Page"
+            android:parentActivityName=".MainActivity">
         </activity>
     </application>
 

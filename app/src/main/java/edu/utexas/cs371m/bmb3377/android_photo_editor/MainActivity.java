@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements
     public static String TAG = "GalleryAdapter.java";
     protected Button galleryButton;
     protected Button cameraButton;
+    protected Button profileButton;
     private Auth auth;
     private TextView name;
 
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements
 
         this.galleryButton = findViewById(R.id.photo_gallery_button);
         this.cameraButton = findViewById(R.id.new_photo_button);
+        this.profileButton = findViewById(R.id.profile_button);
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +61,15 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(openGallery);
             }
         });
-        
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openProfile = new Intent(getApplicationContext(), Profile.class);
+                startActivity(openProfile);
+            }
+        });
+
         auth = Auth.getInstance();
         auth.init(this, this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(auth);

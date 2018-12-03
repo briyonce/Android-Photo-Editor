@@ -1,8 +1,10 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 
 public class Gallery extends AppCompatActivity {
@@ -33,6 +35,11 @@ public class Gallery extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void loadProfile(View view) {
+        Intent profileIntent = new Intent(getApplicationContext(), Profile.class);
+        startActivity(profileIntent);
     }
 
 }
