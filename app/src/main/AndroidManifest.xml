@@ -28,6 +28,10 @@
             android:label="Profile Page"
             android:parentActivityName=".MainActivity">
         </activity>
+        <activity android:name=".RegisterActivity"
+            android:label="Registration Page"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

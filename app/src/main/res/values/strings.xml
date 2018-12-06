@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Android_Photo_Editor</string>
     <string name="user_name">USER NAME</string>
+    <string name="name_text">Name:</string>
+    <string name="email_text">Email:</string>
+    <string name="register_button_text">Register Account</string>
+    <string name="password_rules_text">password must be 8 characters or more</string>
+    <string name="password_text">Password:</string>
+    <string name="user_name_text">User Name:</string>
+    <string name="sign_out_button_text">Sign Out</string>
+    <string name="app_title">*INSERT NAME HERE* PHOTO EDITOR</string>
 </resources>

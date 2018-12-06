@@ -89,11 +89,11 @@
                 android:gravity="center"
                 android:background="@color/darkGrey">
                 <Button
-                    android:id="@+id/delete_button"
+                    android:id="@+id/signout_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/fui_bgEmail"
-                    android:text="Delete Profile"
+                    android:text="@string/sign_out_button_text"
                     android:textAppearance="@style/Theme.AppCompat.NoActionBar"
                     android:textSize="10dp"
                     android:layout_marginTop="5dp"

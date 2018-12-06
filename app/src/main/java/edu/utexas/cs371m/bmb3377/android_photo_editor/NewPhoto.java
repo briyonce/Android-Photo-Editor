@@ -1,6 +1,9 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.animation.BounceInterpolator;
@@ -23,6 +26,10 @@ public class NewPhoto extends AppCompatActivity {
         transitioner.animateTo(30, (long) 500, new BounceInterpolator());
     }
 
+    {
+        // for future reference
+//        MediaStore.Images.Media.insertImage(getContentResolver(), /* photo */, "title,", "description");
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
