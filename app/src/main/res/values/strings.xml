@@ -9,4 +9,8 @@
     <string name="user_name_text">User Name:</string>
     <string name="sign_out_button_text">Sign Out</string>
     <string name="app_title">*INSERT NAME HERE* PHOTO EDITOR</string>
+    <string name="photo_gallery_button_text">Photo Gallery</string>
+    <string name="new_photo_button_text">Take New Picture</string>
+    <string name="facebook_app_id">2172931259637005</string>
+    <string name="fb_login_protocol_scheme">fb2172931259637005</string>
 </resources>

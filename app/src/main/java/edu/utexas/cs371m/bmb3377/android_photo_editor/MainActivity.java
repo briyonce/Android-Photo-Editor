@@ -22,6 +22,10 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
+import android.support.v4.app.FragmentActivity;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,17 +34,19 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class MainActivity extends AppCompatActivity implements
         FirebaseAuth.AuthStateListener {
-    public static String TAG = "GalleryAdapter.java";
+    public static String TAG = "MainActivity.java";
     protected Button galleryButton;
     protected Button cameraButton;
     protected Button profileButton;
     private Auth auth;
-    private TextView name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
         this.galleryButton = findViewById(R.id.photo_gallery_button);
         this.cameraButton = findViewById(R.id.new_photo_button);
@@ -103,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
         if( auth.signedIn() ) {
             String displayName = auth.getDisplayName();
             if( displayName != null && displayName.length() > 0 ) {
-                name.setText(displayName);
+//                name.setText(displayName);
             }
         }
     }

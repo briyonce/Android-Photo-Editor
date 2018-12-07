@@ -24,22 +24,55 @@
             android:layout_gravity="right"
             android:text="Profile"/>
     </android.support.v7.widget.Toolbar>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
-        <Button
-            android:id="@+id/photo_gallery_button"
+        android:weightSum="1">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Photo Gallery"/>
-        <Button
-            android:id="@+id/new_photo_button"
+            android:layout_height="0dp"
+            android:layout_weight=".6"
+            android:orientation="vertical">
+            <fragment
+                android:id="@+id/logo"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                class="edu.utexas.cs371m.bmb3377.android_photo_editor.LogoFragment">
+            </fragment>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Take New Picture"/>
+            android:layout_height="0dp"
+            android:layout_weight=".4"
+            android:weightSum="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".8"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/photo_gallery_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/photo_gallery_button_text" />
+
+                <Button
+                    android:id="@+id/new_photo_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/new_photo_button_text" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+
 
 
 </LinearLayout>
