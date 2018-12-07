@@ -13,4 +13,6 @@
     <string name="new_photo_button_text">Take New Picture</string>
     <string name="facebook_app_id">2172931259637005</string>
     <string name="fb_login_protocol_scheme">fb2172931259637005</string>
+    <string name="existing_photo_button_text">Edit Existing Photo</string>
+    <string name="completed_photo_text">You\'re all set!</string>
 </resources>

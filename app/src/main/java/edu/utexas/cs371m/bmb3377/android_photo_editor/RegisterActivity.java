@@ -2,15 +2,18 @@ package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -32,9 +36,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     Button register_button;
 
+    TextView registerSurprise;
+
     FirebaseAuth auth;
     DatabaseReference reference;
     ProgressDialog progressDialog;
+
+    private final String TAG = "RegisterActivity.java";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +55,9 @@ public class RegisterActivity extends AppCompatActivity {
         this.password_text = findViewById(R.id.password_text);
 
         this.register_button = findViewById(R.id.register_button);
+
+        this.registerSurprise = findViewById(R.id.registration_click_text);
+        this.registerSurprise.setVisibility(View.INVISIBLE);
 
         auth = FirebaseAuth.getInstance();
 
@@ -67,6 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
                 } else if (password.length() < 8) {
                     Toast.makeText(RegisterActivity.this, "Password must be greater than 8 characters", Toast.LENGTH_SHORT).show();
                 } else {
+                    registerSurprise.setVisibility(View.VISIBLE);
                     RegisterActivity.this.register(name, username, email, password);
                 }
             }
@@ -79,23 +91,19 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
-                    String userid = user.getUid();
-
-                    reference = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
-
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put("id", userid);
-                    map.put("username", username.toLowerCase());
-                    map.put("imageURL", "https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6");
-
-                    reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Uri profile_pic_uri = new Uri.Builder().appendPath("https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6").build();
+                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(username).setPhotoUri(profile_pic_uri).build();
+                    user.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
+                            if(task.isSuccessful()) {
+                                Log.d(TAG, "user profile updated successfully");
                                 progressDialog.dismiss();
                                 Intent landingScreenIntent = new Intent(RegisterActivity.this, MainActivity.class);
                                 startActivity(landingScreenIntent);
+                                finish();
                             } else {
+                                Log.d(TAG, "user profile update failure");
                                 progressDialog.dismiss();
                                 Toast.makeText(RegisterActivity.this, "this username is already in use.", Toast.LENGTH_SHORT).show();
                             }
@@ -103,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
                     });
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(RegisterActivity.this, "Either the username or password are invalid", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "This email address is already in use", Toast.LENGTH_SHORT).show();
                 }
             }
         });

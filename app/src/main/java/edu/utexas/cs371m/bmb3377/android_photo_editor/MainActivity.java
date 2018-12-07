@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements
     protected Button galleryButton;
     protected Button cameraButton;
     protected Button profileButton;
+    protected Button existingPhotoButton;
     private Auth auth;
 
     @Override
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements
         this.galleryButton = findViewById(R.id.photo_gallery_button);
         this.cameraButton = findViewById(R.id.new_photo_button);
         this.profileButton = findViewById(R.id.profile_button);
+        this.existingPhotoButton = findViewById(R.id.existing_photo_button);
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +78,13 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        existingPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         auth = Auth.getInstance();
         auth.init(this, this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(auth);
@@ -83,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements
             // User is signed out
             Log.d(MainActivity.TAG, "onAuthStateChanged:signed_out");
             // Let's get you signed in/signed up
-//            Intent startLogin = new Intent(this, LoginActivity.class);
-//            startActivity(startLogin);
+            Intent startLogin = new Intent(this, LoginActivity.class);
+            startActivity(startLogin);
 
         }
 

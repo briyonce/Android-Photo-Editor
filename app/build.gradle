@@ -47,6 +47,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     // for image loading
     implementation 'com.squareup.picasso:picasso:2.5.2'
+    // for image cropping
+    implementation 'com.github.alirezaafkar:Android-Image-Cropper:2.3.3'
 }
 
 apply plugin: 'com.google.gms.google-services'
