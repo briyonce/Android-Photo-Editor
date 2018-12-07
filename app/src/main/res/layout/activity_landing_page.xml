@@ -11,6 +11,7 @@
         android:layout_height="0dp"
         android:layout_weight=".5">
         <fragment
+            android:id="@+id/logo"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             class="edu.utexas.cs371m.bmb3377.android_photo_editor.LogoFragment">
@@ -19,7 +20,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".5">
+        android:layout_weight=".5"
+        android:gravity="center">
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp" />
     </LinearLayout>
 
 

@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements
             // User is signed out
             Log.d(MainActivity.TAG, "onAuthStateChanged:signed_out");
             // Let's get you signed in/signed up
-            Intent startLogin = new Intent(this, RegisterActivity.class);
-            startActivity(startLogin);
+//            Intent startLogin = new Intent(this, LoginActivity.class);
+//            startActivity(startLogin);
 
         }
 
