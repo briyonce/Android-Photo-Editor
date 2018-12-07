@@ -2,6 +2,7 @@ package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.arch.lifecycle.DefaultLifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -43,15 +44,6 @@ public class Auth implements DefaultLifecycleObserver {
                 Holder.helper.user = firebaseAuth.getCurrentUser();
                 // This way, I know user is set properly before we call
                 observer.onAuthStateChanged(null);
-                if( Holder.helper.user == null ){
-                    // User is signed out
-                    Log.d(MainActivity.TAG, "onAuthStateChanged:signed_out");
-                    // Documentation for AuthUI says detach listener when calling AuthUI
-                    // Let's get you signed in/signed up
-                    activity.startActivity(
-                            // Get an instance of AuthUI based on the default app
-                            AuthUI.getInstance().createSignInIntentBuilder().build());
-                }
             }
         };
     }

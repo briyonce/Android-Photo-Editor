@@ -79,6 +79,14 @@ public class MainActivity extends AppCompatActivity implements
         auth = Auth.getInstance();
         auth.init(this, this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(auth);
+        if (!auth.signedIn()) {
+            // User is signed out
+            Log.d(MainActivity.TAG, "onAuthStateChanged:signed_out");
+            // Let's get you signed in/signed up
+            Intent startLogin = new Intent(this, RegisterActivity.class);
+            startActivity(startLogin);
+
+        }
 
     }
 
