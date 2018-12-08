@@ -26,6 +26,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements
     protected Button cameraButton;
     protected Button profileButton;
     protected Button existingPhotoButton;
-    private Auth auth;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,49 +86,61 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        auth = Auth.getInstance();
-        auth.init(this, this);
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(auth);
-        if (!auth.signedIn()) {
+        auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
             // User is signed out
             Log.d(MainActivity.TAG, "onAuthStateChanged:signed_out");
             // Let's get you signed in/signed up
             Intent startLogin = new Intent(this, LoginActivity.class);
             startActivity(startLogin);
+        } else {
+            Intent ret = getIntent();
+            if (ret != null) {
+                int fromProfile = ret.getExtras().getInt("profile");
+                if (fromProfile == 1) {
+                    // do nothing
+                } else {
+                    Toast.makeText(this, "Welcome back " + auth.getCurrentUser().getDisplayName() + "!", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Welcome back " + auth.getCurrentUser().getDisplayName() + "!", Toast.LENGTH_SHORT).show();
+            }
 
         }
 
     }
 
     public void onAuthStateChanged(FirebaseAuth dontuse) {
-        if ( auth.signedIn() ) {
+        if ( auth.getCurrentUser()!= null ) {
             // User is signed in
             updateDisplayUserProfile();
             Log.d(MainActivity.TAG, String.format("%s/%s/%s is signed in",
-                    auth.getDisplayName(),
-                    auth.getEmail(),
+                    auth.getCurrentUser().getDisplayName(),
+                    auth.getCurrentUser().getEmail(),
                     auth.getUid()));
         }
     }
 
     private void updateServerUserProfile(String userName, Uri photoUri) {
-        if( auth.signedIn() ) {
+        if( auth.getCurrentUser() != null) {
             Log.d(TAG, String.format("%s new display name", userName));
             UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
                     .setDisplayName(userName)
                     // A null photoUri will overwrite, no .setPhotoUri will not overwrite
                     //.setPhotoUri(photoUri)
                     .build();
-            auth.updateProfile(request);
+            auth.getCurrentUser().updateProfile(request);
         }
     }
 
     private void updateDisplayUserProfile() {
-        if( auth.signedIn() ) {
-            String displayName = auth.getDisplayName();
+        if( auth.getCurrentUser() != null ) {
+            String displayName = auth.getCurrentUser().getDisplayName();
             if( displayName != null && displayName.length() > 0 ) {
 //                name.setText(displayName);
             }
         }
     }
+
+
 }

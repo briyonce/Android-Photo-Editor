@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
@@ -30,17 +31,15 @@ public class NewPhoto extends AppCompatActivity {
         // for future reference
 //        MediaStore.Images.Media.insertImage(getContentResolver(), /* photo */, "title,", "description");
     }
+
+    //handles back button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         switch(id) {
-            // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                //Log.d(MainActivity.TAG, "Exit OnePost");
+                Log.d(MainActivity.TAG, "Exit NewPhoto");
                 finish();
                 return true;
         }

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,7 +35,8 @@ public class RegisterActivity extends AppCompatActivity {
     EditText email_text;
     EditText password_text;
 
-    Button register_button;
+    Button registerBut;
+    Button backBut;
 
     TextView registerSurprise;
 
@@ -54,14 +56,14 @@ public class RegisterActivity extends AppCompatActivity {
         this.email_text = findViewById(R.id.email_text);
         this.password_text = findViewById(R.id.password_text);
 
-        this.register_button = findViewById(R.id.register_button);
-
+        this.registerBut = findViewById(R.id.register_button);
+        this.backBut = findViewById(R.id.back_button);
         this.registerSurprise = findViewById(R.id.registration_click_text);
         this.registerSurprise.setVisibility(View.INVISIBLE);
 
         auth = FirebaseAuth.getInstance();
 
-        register_button.setOnClickListener(new View.OnClickListener() {
+        registerBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressDialog = new ProgressDialog(RegisterActivity.this);
@@ -74,13 +76,22 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = password_text.getText().toString();
 
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(username) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-                    Toast.makeText(RegisterActivity.this, "Please enter values for all fields", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this, "Please enter values for all fields", Toast.LENGTH_LONG).show();
                 } else if (password.length() < 8) {
-                    Toast.makeText(RegisterActivity.this, "Password must be greater than 8 characters", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this, "Password must be greater than 8 characters", Toast.LENGTH_LONG).show();
                 } else {
                     registerSurprise.setVisibility(View.VISIBLE);
                     RegisterActivity.this.register(name, username, email, password);
                 }
+            }
+        });
+
+        backBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBack();
             }
         });
     }
@@ -116,5 +127,23 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         Auth.getInstance().user = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    //handles back button
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch(id) {
+            case android.R.id.home:
+                Log.d(TAG, "Exit NewPhoto");
+                goBack();
+        }
+        return true;
+    }
+
+    private void goBack() {
+        Intent returnToLogin = new Intent(this, LoginActivity.class);
+        startActivity(returnToLogin);
     }
 }
