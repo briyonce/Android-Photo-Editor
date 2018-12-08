@@ -34,7 +34,7 @@ public class Profile extends AppCompatActivity {
         signOutBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Auth.getInstance().signOut();
+                FirebaseAuth.getInstance().signOut();
                 Intent returnHomeIntent = new Intent(Profile.this, MainActivity.class);
                 startActivity(returnHomeIntent);
             }
