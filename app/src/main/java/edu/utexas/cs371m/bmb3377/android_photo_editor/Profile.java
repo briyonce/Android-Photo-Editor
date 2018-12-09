@@ -1,8 +1,10 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,20 +12,25 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
@@ -36,7 +43,6 @@ public class Profile extends AppCompatActivity {
     private final String TAG = "Profile.java";
     private FirebaseAuth auth;
     private FirebaseUser user;
-    private TextView editProfileText;
     private TextView usernameText;
     private DatabaseReference reference;
 
@@ -49,23 +55,9 @@ public class Profile extends AppCompatActivity {
         user = auth.getCurrentUser();
 
         circleImageView = findViewById(R.id.profile_image);
-        editProfileText = findViewById(R.id.edit_profile_text);
-
-        editProfileText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent profileEditorLaunch = new Intent(Profile.this, EditProfileActivity.class);
-//                startActivity(profileEditorLaunch);
-            }
-        });
 
         reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
         if (user.getPhotoUrl() != null) {
-<<<<<<< HEAD
-            getPhotoAsync();
-            Log.d(TAG, "after getPhotoAsync");
-        }
-=======
             if (user.getPhotoUrl().equals("/https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fmobile-computing-project.appspot.com%2Fo%2Futex-bevo.png%3Falt%3Dmedia%26token%3D559dd5f0-b294-4a35-968b-0b2003a012c6")) {
 //                final ProgressDialog progressDialog = new ProgressDialog(Profile.this);
 //                progressDialog.show();
@@ -90,25 +82,10 @@ public class Profile extends AppCompatActivity {
 //                    }
 //                });
             }
-//            getPhotoAsync();
-//            Log.d(TAG, "photo user: " + user.getPhotoUrl());
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-
-        } else {
-            Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
+            getPhotoAsync();
         }
 
-=======
 
-        } else {
-            Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
-        }
-
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
         usernameText = findViewById(R.id.username_text);
         if (user != null) {
             usernameText.setText(user.getDisplayName());
@@ -139,103 +116,7 @@ public class Profile extends AppCompatActivity {
     }
 
     public void getPhotoAsync() {
-        Log.d(TAG, "in getPhotoAsync");
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-        String url = user.getPhotoUrl().toString();
-        Log.d(TAG, "original url: " + url);
-        try {
-            url = java.net.URLDecoder.decode(url, "UTF-8");
-            if (url.charAt(0) == '/') {
-                url = url.substring(1, url.length());
-            }
-            Log.d(TAG, "equality: " + url.equals("https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6"));
-        } catch (UnsupportedEncodingException e) {
-            Log.d(TAG, "decoding error: " + e.getMessage());
-        }
-        Log.d(TAG, "url: " + url);
-// Create a reference to a file from a Google Cloud Storage URI
-        if (url != null) {
-            Log.d(TAG, "url is not null");
-            StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-            Log.d(TAG, "gsReference created");
-//
-=======
-=======
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-        String url = user.getPhotoUrl().toString(); //"gs://bucket/images/stars.jpg"
 
-        if (url != null) {
-            Log.d(TAG, "url is not null. url: " + url);
-            // Create a reference to a file from a Google Cloud Storage URI
-            StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-            gsReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    // handle success
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    Log.d(TAG, "photo download success");
-                    Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
-                    Picasso.with(Profile.this).load(uri).into(circleImageView);
-=======
-                    Log.d(TAG, "successful download");
-                    Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
-//                    Picasso.with(Profile.this).load(uri).into(circleImageView);
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
-                    Log.d(TAG, "successful download");
-                    Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
-//                    Picasso.with(Profile.this).load(uri).into(circleImageView);
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
-                    Log.d(TAG, "successful download");
-                    Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
-//                    Picasso.with(Profile.this).load(uri).into(circleImageView);
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    Log.d(TAG, "error: " + exception.getMessage());
-
-                }
-            });
-        } else {
-            Log.d(TAG, "photo uri is null");
-            Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
-=======
-                    Log.d(TAG, "failure: " + exception.getMessage());
-                }
-            });
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
-                    Log.d(TAG, "failure: " + exception.getMessage());
-                }
-            });
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-=======
-                    Log.d(TAG, "failure: " + exception.getMessage());
-                }
-            });
->>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
-        }
     }
 
     //handles back button
