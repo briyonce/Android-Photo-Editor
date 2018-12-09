@@ -29,7 +29,7 @@
         android:id="@+id/profile_image"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:src="@mipmap/ic_launcher"
         app:civ_border_width="2dp"
@@ -43,7 +43,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="0dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
@@ -90,8 +90,22 @@
                 android:id="@+id/password_text"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
+                android:inputType="textPassword"
+                android:ellipsize="start"
                 android:padding="10dp"
                 android:hint="Password"
+                android:textSize="15dp"
+                android:background="@color/darkGrey" />
+
+            <EditText
+                android:id="@+id/password_verify_text"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginTop="20dp"
+                android:inputType="textPassword"
+                android:ellipsize="start"
+                android:padding="10dp"
+                android:hint="Confirm Password"
                 android:textSize="15dp"
                 android:background="@color/darkGrey" />
         </LinearLayout>

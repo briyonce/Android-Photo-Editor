@@ -2,6 +2,7 @@ package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,8 @@ import android.widget.Toast;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
+
+import es.dmoral.toasty.Toasty;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -97,8 +100,15 @@ public class MainActivity extends AppCompatActivity implements
             Intent ret = getIntent();
             if (ret != null) {
                 int fromProfile = ret.getExtras().getInt("profile");
+                int fromRegister = ret.getExtras().getInt("register");
+                int fromLogin = ret.getExtras().getInt("login");
                 if (fromProfile == 1) {
                     // do nothing
+                } else if (fromRegister == 1) {
+                    Toasty.success(this, "Welcome to " + auth.getCurrentUser().getDisplayName() + "!", Toast.LENGTH_SHORT, true).show();
+                } else if (fromLogin == 1) {
+                    Drawable icon = getResources().getDrawable(R.drawable.blank_person);
+                    Toasty.normal(getApplicationContext(), "Welcome back " + auth.getCurrentUser().getDisplayName(), icon).show();
                 } else {
                     Toast.makeText(this, "Welcome back " + auth.getCurrentUser().getDisplayName() + "!", Toast.LENGTH_SHORT).show();
                 }

@@ -49,9 +49,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/darkGrey"
+                android:inputType="textPassword"
+                android:ellipsize="start"
                 android:hint="Password"
                 android:textSize="20dp"
-                android:inputType="textEmailAddress"
                 android:padding="10dp"/>
 
             <Button

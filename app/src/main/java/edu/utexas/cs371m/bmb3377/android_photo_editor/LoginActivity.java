@@ -2,6 +2,7 @@ package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -46,6 +47,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
+import es.dmoral.toasty.Toasty;
+
 public class LoginActivity extends AppCompatActivity {
 
     protected FirebaseAuth auth;
@@ -83,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = this.password.getText().toString();
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Please enter values for all fields", Toast.LENGTH_SHORT).show();
+            Toasty.error(this, "Please enter values for all fields", Toast.LENGTH_SHORT).show();
         } else {
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -93,13 +96,12 @@ public class LoginActivity extends AppCompatActivity {
                         reference = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
 
                         String username = reference.getKey();
-
-                        Toast.makeText(getApplicationContext(), "Welcome back " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                         Intent startApp = new Intent(LoginActivity.this, MainActivity.class);
+                        startApp.putExtra("login", 1);
                         startActivity(startApp);
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Either username or password is incorrect", Toast.LENGTH_SHORT).show();
+                        Toasty.error(getApplicationContext(), "Either username or password is incorrect", Toast.LENGTH_SHORT, true).show();
                     }
                 }
             });
