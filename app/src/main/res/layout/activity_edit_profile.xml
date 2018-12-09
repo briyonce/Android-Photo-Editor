@@ -40,7 +40,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".2"
+            android:layout_weight=".3"
             android:orientation="vertical"
             android:gravity="center">
             <de.hdodenhof.circleimageview.CircleImageView
@@ -63,79 +63,45 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".7"
+            android:layout_weight=".6"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/name_text"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginTop="20dp"
-                android:padding="10dp"
-                android:hint="Full Name"
-                android:textSize="15dp"
-                android:background="@color/darkGrey" />
-
-            <EditText
-                android:id="@+id/username_text"
+                android:id="@+id/username_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_marginTop="20dp"
                 android:padding="10dp"
                 android:hint="Username"
-                android:textSize="15dp"
-                android:background="@color/darkGrey" />
-
-            <EditText
-                android:id="@+id/email_text"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginTop="20dp"
-                android:padding="10dp"
-                android:hint="Email"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textStyle="italic"
                 android:background="@color/darkGrey" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:text="@string/password_rules_text"
-                android:textSize="12sp"
-                android:textStyle="italic" />
-
+                android:text="Maximum 70 characters"
+                android:textStyle="italic"
+                android:textSize="13sp"/>
             <EditText
-                android:id="@+id/password_text"
+                android:id="@+id/bio_text"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:inputType="textPassword"
-                android:ellipsize="start"
+                android:layout_height="200dp"
+                android:hint="Bio"
+                android:gravity="top"
+                android:textSize="15sp"
+                android:textStyle="italic"
                 android:padding="10dp"
-                android:hint="Password"
-                android:textSize="15dp"
-                android:background="@color/darkGrey" />
-
-            <EditText
-                android:id="@+id/password_verify_text"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginTop="20dp"
-                android:inputType="textPassword"
-                android:ellipsize="start"
-                android:padding="10dp"
-                android:hint="Confirm Password"
-                android:textSize="15dp"
-                android:background="@color/darkGrey" />
+                android:background="@color/darkGrey"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".15"
-            android:gravity="center_horizontal"
-            android:background="@color/darkGrey">
+            android:gravity="center_horizontal">
             <Button
                 android:id="@+id/update_button"
                 android:layout_width="105dp"

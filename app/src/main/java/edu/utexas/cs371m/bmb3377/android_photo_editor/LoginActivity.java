@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(View view) {
-        String email = this.email.getText().toString();
+        final String email = this.email.getText().toString();
         String password = this.password.getText().toString();
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
@@ -98,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                         String username = reference.getKey();
                         Intent startApp = new Intent(LoginActivity.this, MainActivity.class);
                         startApp.putExtra("login", 1);
+                        startApp.putExtra("email", email);
                         startActivity(startApp);
                         finish();
                     } else {

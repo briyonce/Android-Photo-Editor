@@ -1,7 +1,9 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,14 +59,12 @@ public class EditProfileActivity extends AppCompatActivity {
     private Button cancelBut;
     private Button doneBut;
 
-    EditText nameText;
     EditText usernameEditText;
-    EditText emailText;
-    EditText passwordText;
-    EditText confirmPasswordText;
+    EditText bioText;
 
     private Uri profileUri;
 
+    private boolean changesMade = false;
     private final String TAG = "EditProfileActivity.java";
     private FirebaseAuth auth;
     private FirebaseUser user;
@@ -81,12 +82,14 @@ public class EditProfileActivity extends AppCompatActivity {
         profileUri = user.getPhotoUrl();
 
         profilePictureView = findViewById(R.id.profile_image);
-
-        if (profileUri != null) {
-            getPhotoAsync();
-        }
-        
         editProfilePicText = findViewById(R.id.edit_profile_picture_text);
+
+        reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+
+        if (user.getPhotoUrl() != null) {
+            getPhotoAsync();
+            Log.d(TAG, "after getPhotoAsync");
+        }
 
         editProfilePicText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,19 +98,16 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
-        reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-        if (user.getPhotoUrl() != null) {
-//            getPhotoAsync();
-            Log.d(TAG, "after getPhotoAsync");
-        }
-
-
         updateBut = findViewById(R.id.update_button);
         updateBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // update user
+                updateProfilePhoto();
+                updateProfileInfo();
+                getPhotoAsync();
                 Toasty.success(EditProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT, true).show();
+                changesMade = false;
                 getPhotoAsync();
             }
         });
@@ -125,9 +125,37 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // if there are unsaved changes ask the user if they're sure they're done
+                if (changesMade) {
+                    createDialog();
+                } else {
+                    goBack();
+                }
+            }
+        });
+
+        usernameEditText = findViewById(R.id.username_edit_text);
+        bioText = findViewById(R.id.bio_text);
+    }
+
+    private void createDialog() {
+        AlertDialog.Builder alertDialogue = new AlertDialog.Builder(this);
+        alertDialogue.setMessage("Are you sure you want to exit? You have unsaved changes.");
+        alertDialogue.setCancelable(false);
+        alertDialogue.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
                 goBack();
             }
         });
+
+        alertDialogue.setNegativeButton("Stay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        alertDialogue.create().show();
     }
 
     @Override
@@ -143,8 +171,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 profilePictureView.setImageBitmap(selectedImage);
 //                hasImageChanged = true;
 
-                updateProfilePhoto();
-                getPhotoAsync();
             } catch (FileNotFoundException e) {
 
             }
@@ -155,6 +181,23 @@ public class EditProfileActivity extends AppCompatActivity {
             Toasty.error(this, "error after crop activity", Toast.LENGTH_SHORT, true ).show();
         }
     }
+
+    private void updateProfileInfo() {
+        String newUserName = usernameEditText.getText().toString();
+        String newBio = bioText.getText().toString();
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("updating profile...");
+        progressDialog.show();
+        if (!TextUtils.isEmpty(newUserName) && (newUserName.length() <= 20)) {
+            UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(newUserName).build();
+
+        } else if (newUserName.length() > 20) {
+            progressDialog.dismiss();
+            Toasty.error(this, "Username must be shorter than 8 characters",
+                    Toast.LENGTH_SHORT, true).show();
+        }
+    }
+
 
     private void updateProfilePhoto() {
         final ProgressDialog progressDialog = new ProgressDialog(this);

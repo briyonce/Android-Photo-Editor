@@ -120,18 +120,19 @@ public class RegisterActivity extends AppCompatActivity {
                                 Log.d(TAG, "user profile updated successfully");
                                 progressDialog.dismiss();
                                 Intent landingScreenIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                                landingScreenIntent.putExtra("register", 1);
                                 startActivity(landingScreenIntent);
                                 finish();
                             } else {
                                 Log.d(TAG, "user profile update failure");
                                 progressDialog.dismiss();
-                                Toast.makeText(RegisterActivity.this, "this username is already in use.", Toast.LENGTH_SHORT).show();
+                                Toasty.error(RegisterActivity.this, "this username is already in use.", Toast.LENGTH_SHORT, true).show();
                             }
                         }
                     });
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(RegisterActivity.this, "This email address is already in use", Toast.LENGTH_SHORT).show();
+                    Toasty.error(RegisterActivity.this, "This email address is already in use", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
