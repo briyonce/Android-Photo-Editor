@@ -93,6 +93,7 @@ public class Profile extends AppCompatActivity {
 //            getPhotoAsync();
 //            Log.d(TAG, "photo user: " + user.getPhotoUrl());
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
 =======
 >>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
@@ -101,6 +102,13 @@ public class Profile extends AppCompatActivity {
             Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
         }
 
+=======
+
+        } else {
+            Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
+        }
+
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
         usernameText = findViewById(R.id.username_text);
         if (user != null) {
             usernameText.setText(user.getDisplayName());
@@ -134,6 +142,7 @@ public class Profile extends AppCompatActivity {
         Log.d(TAG, "in getPhotoAsync");
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         String url = user.getPhotoUrl().toString();
         Log.d(TAG, "original url: " + url);
         try {
@@ -155,6 +164,8 @@ public class Profile extends AppCompatActivity {
 =======
 =======
 >>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
+=======
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
         String url = user.getPhotoUrl().toString(); //"gs://bucket/images/stars.jpg"
 
         if (url != null) {
@@ -163,6 +174,9 @@ public class Profile extends AppCompatActivity {
             StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
+=======
 >>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
 =======
 >>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
@@ -172,9 +186,15 @@ public class Profile extends AppCompatActivity {
                     // handle success
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                     Log.d(TAG, "photo download success");
                     Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
                     Picasso.with(Profile.this).load(uri).into(circleImageView);
+=======
+                    Log.d(TAG, "successful download");
+                    Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
+//                    Picasso.with(Profile.this).load(uri).into(circleImageView);
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
 =======
                     Log.d(TAG, "successful download");
                     Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
@@ -192,6 +212,7 @@ public class Profile extends AppCompatActivity {
                     // Handle any errors
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                     Log.d(TAG, "error: " + exception.getMessage());
 
                 }
@@ -199,6 +220,11 @@ public class Profile extends AppCompatActivity {
         } else {
             Log.d(TAG, "photo uri is null");
             Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
+=======
+                    Log.d(TAG, "failure: " + exception.getMessage());
+                }
+            });
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
 =======
                     Log.d(TAG, "failure: " + exception.getMessage());
                 }
