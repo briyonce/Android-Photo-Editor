@@ -1,10 +1,13 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
+import android.app.Activity;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements
     protected Button profileButton;
     protected Button existingPhotoButton;
     private FirebaseAuth auth;
+    private static final int CAMERA_REQ = 1888;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +62,13 @@ public class MainActivity extends AppCompatActivity implements
         this.profileButton = findViewById(R.id.profile_button);
         this.existingPhotoButton = findViewById(R.id.existing_photo_button);
 
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent openCamera = new Intent(getApplicationContext(), NewPhoto.class);
-                startActivity(openCamera);
-            }
-        });
+//        cameraButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent openCamera = new Intent(getApplicationContext(), NewPhoto.class);
+//                startActivity(openCamera);
+//            }
+//        });
 
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +145,21 @@ public class MainActivity extends AppCompatActivity implements
                     .build();
             auth.getCurrentUser().updateProfile(request);
         }
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == CAMERA_REQ && resultCode == Activity.RESULT_OK){
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            Bundle args = new Bundle();
+            args.putParcelable("photo", photo);
+            Intent start_edit = new Intent(getApplicationContext(), NewPhoto.class);
+            start_edit.putExtras(args);
+            startActivity(start_edit, args);
+        }
+    }
+
+    public void cameraButtonPressed(View view) {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQ);
     }
 
     private void updateDisplayUserProfile() {
