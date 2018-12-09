@@ -82,12 +82,9 @@ public class Profile extends AppCompatActivity {
 //                    }
 //                });
             }
-//            getPhotoAsync();
-//            Log.d(TAG, "photo user: " + user.getPhotoUrl());
-
-        } else {
-            Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
+            getPhotoAsync();
         }
+
 
         usernameText = findViewById(R.id.username_text);
         if (user != null) {
@@ -119,30 +116,7 @@ public class Profile extends AppCompatActivity {
     }
 
     public void getPhotoAsync() {
-        Log.d(TAG, "in getPhotoAsync");
-        String url = user.getPhotoUrl().toString(); //"gs://bucket/images/stars.jpg"
 
-        if (url != null) {
-            Log.d(TAG, "url is not null. url: " + url);
-            // Create a reference to a file from a Google Cloud Storage URI
-            StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-
-            gsReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    // handle success
-                    Log.d(TAG, "successful download");
-                    Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
-//                    Picasso.with(Profile.this).load(uri).into(circleImageView);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    Log.d(TAG, "failure: " + exception.getMessage());
-                }
-            });
-        }
     }
 
     //handles back button
