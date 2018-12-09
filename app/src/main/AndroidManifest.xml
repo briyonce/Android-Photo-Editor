@@ -50,6 +50,10 @@
             android:label="Profile Page"
             android:parentActivityName=".MainActivity">
         </activity>
+        <activity android:name=".EditProfileActivity"
+            android:label="Edit Profile Page"
+            android:parentActivityName=".Profile">
+        </activity>
         <activity android:name=".RegisterActivity"
             android:label="Registration Page"
             android:parentActivityName=".LoginActivity">

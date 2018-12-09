@@ -111,35 +111,27 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
-
-                    String userid = user.getUid();
-                    reference = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
-
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put("id", userid);
-                    map.put("username", username);
-                    map.put("name", name);
-                    map.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6");
-                    reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Uri profile_pic_uri = new Uri.Builder().appendPath("https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6").build();
+                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(username).setPhotoUri(profile_pic_uri).build();
+                    user.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()) {
                                 Log.d(TAG, "user profile updated successfully");
                                 progressDialog.dismiss();
                                 Intent landingScreenIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                                landingScreenIntent.putExtra("register", 1);
                                 startActivity(landingScreenIntent);
                                 finish();
                             } else {
                                 Log.d(TAG, "user profile update failure");
                                 progressDialog.dismiss();
-                                Toasty.error(RegisterActivity.this, "this username is already in use.", Toast.LENGTH_SHORT, true).show();
+                                Toast.makeText(RegisterActivity.this, "this username is already in use.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                 } else {
                     progressDialog.dismiss();
-                    Toasty.error(RegisterActivity.this, "This email address is already in use", Toast.LENGTH_SHORT, true).show();
+                    Toast.makeText(RegisterActivity.this, "This email address is already in use", Toast.LENGTH_SHORT).show();
                 }
             }
         });
