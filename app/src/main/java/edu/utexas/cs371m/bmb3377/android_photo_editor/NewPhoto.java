@@ -8,12 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.animation.BounceInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class NewPhoto extends AppCompatActivity {
     private Transitioner transitioner;
     protected LinearLayout cameraLayout;
     protected LinearLayout galleryLayout;
+    protected ImageView new_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +24,14 @@ public class NewPhoto extends AppCompatActivity {
 
         cameraLayout = findViewById(R.id.camera_holder);
         galleryLayout = findViewById(R.id.filter_gallery);
+        Bitmap photo = (Bitmap) getIntent().getExtras().getParcelable("photo");
+        Log.d("NewPhoto: ", "got created");
+        new_image = findViewById(R.id.recent_photo);
+        new_image.setImageBitmap(photo);
 
         transitioner = new Transitioner(cameraLayout, galleryLayout);
         transitioner.animateTo(30, (long) 500, new BounceInterpolator());
+
     }
 
     {
