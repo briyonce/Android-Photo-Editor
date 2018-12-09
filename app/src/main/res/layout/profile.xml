@@ -47,6 +47,11 @@
                 android:layout_weight=".4"/>
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".6"
                 android:orientation="vertical"
@@ -63,17 +68,13 @@
                     android:orientation="horizontal"
                     android:gravity="center_horizontal">
                     <TextView
+                        android:id="@+id/edit_profile_text"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="User since "
+                        android:text="Edit Profile"
                         android:textStyle="italic"
+                        android:textColor="@color/colorAccent"
                         />
-                    <TextView
-                        android:id="@+id/start_date_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="start date"
-                        android:textStyle="italic"/>
                 </LinearLayout>
 
             </LinearLayout>
