@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,13 +27,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
+import es.dmoral.toasty.Toasty;
+
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText name_text;
-    EditText username_text;
-    EditText email_text;
-    EditText password_text;
-
+    EditText nameText;
+    EditText usernameText;
+    EditText emailText;
+    EditText passwordText;
+    EditText confirmPasswordText;
     Button registerBut;
     Button backBut;
 
@@ -51,10 +52,11 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        this.name_text = findViewById(R.id.name_text);
-        this.username_text = findViewById(R.id.username_text);
-        this.email_text = findViewById(R.id.email_text);
-        this.password_text = findViewById(R.id.password_text);
+        this.nameText = findViewById(R.id.name_text);
+        this.usernameText = findViewById(R.id.username_text);
+        this.emailText = findViewById(R.id.email_text);
+        this.passwordText = findViewById(R.id.password_text);
+        this.confirmPasswordText = findViewById(R.id.password_verify_text);
 
         this.registerBut = findViewById(R.id.register_button);
         this.backBut = findViewById(R.id.back_button);
@@ -70,18 +72,25 @@ public class RegisterActivity extends AppCompatActivity {
                 progressDialog.setMessage("registering...");
                 progressDialog.show();
 
-                String name = name_text.getText().toString();
-                String username = username_text.getText().toString();
-                String email = email_text.getText().toString();
-                String password = password_text.getText().toString();
+                String name = nameText.getText().toString();
+                String username = usernameText.getText().toString();
+                String email = emailText.getText().toString();
+                String password = passwordText.getText().toString();
+                String passwordVerification = confirmPasswordText.getText().toString();
 
-                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(username) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(username) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(passwordVerification)) {
                     progressDialog.dismiss();
-                    Toast.makeText(RegisterActivity.this, "Please enter values for all fields", Toast.LENGTH_LONG).show();
+                    Toasty.error(RegisterActivity.this, "Please enter values for all fields",
+                            Toast.LENGTH_SHORT, true).show();
                 } else if (password.length() < 8) {
                     progressDialog.dismiss();
-                    Toast.makeText(RegisterActivity.this, "Password must be greater than 8 characters", Toast.LENGTH_LONG).show();
-                } else {
+                    Toasty.error(RegisterActivity.this, "Password must be greater than 8 characters",
+                            Toast.LENGTH_SHORT, true).show();
+                } else if (!password.equals(passwordVerification)) {
+                    progressDialog.dismiss();
+                    Toasty.error(RegisterActivity.this, "Password and password confirmation do not match",
+                            Toast.LENGTH_SHORT, true).show();
+                }  else {
                     registerSurprise.setVisibility(View.VISIBLE);
                     RegisterActivity.this.register(name, username, email, password);
                 }
@@ -96,33 +105,41 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void register(String name, final String username, String email, String password) {
+    public void register(final String name, final String username, String email, String password) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
-                    Uri profile_pic_uri = new Uri.Builder().appendPath("https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6").build();
-                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(username).setPhotoUri(profile_pic_uri).build();
-                    user.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                    String userid = user.getUid();
+                    reference = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
+
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("id", userid);
+                    map.put("username", username);
+                    map.put("name", name);
+                    map.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6");
+                    reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()) {
                                 Log.d(TAG, "user profile updated successfully");
                                 progressDialog.dismiss();
                                 Intent landingScreenIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                                landingScreenIntent.putExtra("register", 1);
                                 startActivity(landingScreenIntent);
                                 finish();
                             } else {
                                 Log.d(TAG, "user profile update failure");
                                 progressDialog.dismiss();
-                                Toast.makeText(RegisterActivity.this, "this username is already in use.", Toast.LENGTH_SHORT).show();
+                                Toasty.error(RegisterActivity.this, "this username is already in use.", Toast.LENGTH_SHORT, true).show();
                             }
                         }
                     });
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(RegisterActivity.this, "This email address is already in use", Toast.LENGTH_SHORT).show();
+                    Toasty.error(RegisterActivity.this, "This email address is already in use", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
