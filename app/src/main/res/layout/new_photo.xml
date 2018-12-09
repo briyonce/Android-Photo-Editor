@@ -3,6 +3,24 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textStyle="bold"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Next"
+            android:textStyle="bold" />
+    </android.support.v7.widget.Toolbar>
     <LinearLayout
         android:id="@+id/camera_holder"
         android:layout_width="match_parent"
@@ -13,7 +31,7 @@
         <ImageView
             android:id="@+id/recent_photo"
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/filter_gallery"
@@ -27,3 +45,4 @@
             android:layout_height="50dp" />
     </LinearLayout>
 </LinearLayout>
+
