@@ -61,10 +61,42 @@ public class Profile extends AppCompatActivity {
 
         reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
         if (user.getPhotoUrl() != null) {
+<<<<<<< HEAD
             getPhotoAsync();
             Log.d(TAG, "after getPhotoAsync");
         }
+=======
+            if (user.getPhotoUrl().equals("/https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fmobile-computing-project.appspot.com%2Fo%2Futex-bevo.png%3Falt%3Dmedia%26token%3D559dd5f0-b294-4a35-968b-0b2003a012c6")) {
+//                final ProgressDialog progressDialog = new ProgressDialog(Profile.this);
+//                progressDialog.show();
+//                String userid = user.getUid();
+//                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(userid);
+//
+//                HashMap<String, Object> map = new HashMap<>();
+//                map.put("id", userid);
+//                map.put("username", user.getDisplayName());
+//                map.put("name", user.getDisplayName());
+//                map.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6");
+//                reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        progressDialog.dismiss();
+//                        if(task.isSuccessful()) {
+//                            Log.d(TAG, "user profile updated successfully");
+//                        } else {
+//                            Log.d(TAG, "user profile update failure");
+//                            Toasty.error(Profile.this, "failed to update database for user", Toast.LENGTH_SHORT, true).show();
+//                        }
+//                    }
+//                });
+            }
+//            getPhotoAsync();
+//            Log.d(TAG, "photo user: " + user.getPhotoUrl());
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
 
+        } else {
+            Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
+        }
 
         usernameText = findViewById(R.id.username_text);
         if (user != null) {
@@ -97,6 +129,7 @@ public class Profile extends AppCompatActivity {
 
     public void getPhotoAsync() {
         Log.d(TAG, "in getPhotoAsync");
+<<<<<<< HEAD
         String url = user.getPhotoUrl().toString();
         Log.d(TAG, "original url: " + url);
         try {
@@ -115,18 +148,34 @@ public class Profile extends AppCompatActivity {
             StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
             Log.d(TAG, "gsReference created");
 //
+=======
+        String url = user.getPhotoUrl().toString(); //"gs://bucket/images/stars.jpg"
+
+        if (url != null) {
+            Log.d(TAG, "url is not null. url: " + url);
+            // Create a reference to a file from a Google Cloud Storage URI
+            StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
             gsReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
                     // handle success
+<<<<<<< HEAD
                     Log.d(TAG, "photo download success");
                     Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
                     Picasso.with(Profile.this).load(uri).into(circleImageView);
+=======
+                    Log.d(TAG, "successful download");
+                    Toasty.info(Profile.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
+//                    Picasso.with(Profile.this).load(uri).into(circleImageView);
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
+<<<<<<< HEAD
                     Log.d(TAG, "error: " + exception.getMessage());
 
                 }
@@ -134,6 +183,11 @@ public class Profile extends AppCompatActivity {
         } else {
             Log.d(TAG, "photo uri is null");
             Toasty.info(Profile.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
+=======
+                    Log.d(TAG, "failure: " + exception.getMessage());
+                }
+            });
+>>>>>>> parent of b739f69... got rid of build errors. working on loading profile pic into circleimageview
         }
     }
 
