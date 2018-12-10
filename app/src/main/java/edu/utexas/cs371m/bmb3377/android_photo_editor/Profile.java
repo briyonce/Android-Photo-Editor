@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -29,12 +30,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_SCALE;
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class Profile extends AppCompatActivity {
 
@@ -82,19 +87,27 @@ public class Profile extends AppCompatActivity {
         }
 
         signOutBut = findViewById(R.id.signout_button);
-        signOutBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                auth.signOut();
-                if (auth.getCurrentUser() == null) {
-                    Toasty.success(Profile.this, "Successfully signed out!", Toast.LENGTH_SHORT, true).show();
-                    Intent returnHomeIntent = new Intent(Profile.this, MainActivity.class);
-                    startActivity(returnHomeIntent);
-                } else {
-                    Toasty.error(Profile.this, "Sign out error.", Toast.LENGTH_SHORT, true).show();
-                }
-            }
-        });
+
+        PushDownAnim.setPushDownAnimTo(signOutBut)
+        .setScale( MODE_STATIC_DP, PushDownAnim.DEFAULT_PUSH_STATIC  )
+                .setDurationPush( PushDownAnim.DEFAULT_PUSH_DURATION )
+                .setDurationRelease( PushDownAnim.DEFAULT_RELEASE_DURATION )
+                .setInterpolatorPush( PushDownAnim.DEFAULT_INTERPOLATOR )
+                .setInterpolatorRelease( PushDownAnim.DEFAULT_INTERPOLATOR )
+                .setOnClickListener( new View.OnClickListener(){
+                    @Override
+                    public void onClick( View view ){
+                        auth.signOut();
+                        if (auth.getCurrentUser() == null) {
+                            Toasty.success(Profile.this, "Successfully signed out!", Toast.LENGTH_SHORT, true).show();
+                            Intent returnHomeIntent = new Intent(Profile.this, MainActivity.class);
+                            startActivity(returnHomeIntent);
+                        } else {
+                            Toasty.error(Profile.this, "Sign out error.", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+
 
         backBut = findViewById(R.id.back_button);
         backBut.setOnClickListener(new View.OnClickListener() {

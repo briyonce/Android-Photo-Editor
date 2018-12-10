@@ -30,11 +30,15 @@ public class Gallery extends AppCompatActivity {
         switch(id) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                //Log.d(MainActivity.TAG, "Exit OnePost");
-                finish();
+                goBack();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void goBack() {
+        Intent returnHome = new Intent(Gallery.this, MainActivity.class);
+        startActivity(returnHome);
     }
 
     public void loadProfile(View view) {

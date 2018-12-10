@@ -56,6 +56,13 @@ dependencies {
         exclude module: 'support-v4'
     }
     implementation 'ja.burhanrashid52:photoeditor:0.3.3'
+    implementation 'com.github.duanhong169:text-button:1.0.5'
+    // clickable buttons
+    implementation( 'com.github.thekhaeng:pushdown-anim-click:1.1.1' ){
+        exclude group: 'com.android.support'
+    }
+
+    implementation 'in.shadowfax:proswipebutton:1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.LightingColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -74,6 +75,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextView editProfilePicText;
     private DatabaseReference reference;
     private ProgressDialog progressDialog;
+    boolean dbFail = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -196,7 +198,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void updateProfileInfo() {
         String newUserName = usernameEditText.getText().toString();
+        String bio = bioText.getText().toString();
         if (!TextUtils.isEmpty(newUserName) && (newUserName.length() <= 20)) {
+            Log.d(TAG, "updating username...");
             UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(newUserName).build();
             user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -210,11 +214,64 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                 }
             });
-
+            if (!TextUtils.isEmpty(bio) && (bio.length() <= 70)) {
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid() + "/bio");
+                Log.d(TAG, "adding bio to database...");
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("bio", bio);
+                databaseReference.updateChildren(map).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toasty.error(EditProfileActivity.this, "adding bio to database failed", Toast.LENGTH_SHORT, true).show();
+                        Log.d(TAG, "adding bio to database failed...: " + e.getMessage() );
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "adding bio to database successful");
+                    }
+                });
+            }
         } else if (newUserName.length() > 20) {
             progressDialog.dismiss();
             Toasty.error(this, "Username must be shorter than 8 characters",
                     Toast.LENGTH_SHORT, true).show();
+        } else if (!TextUtils.isEmpty(bio) && (bio.length() <= 70)) {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid() + "/bio");
+            Log.d(TAG, "adding bio to database...");
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("bio", bio);
+            databaseReference.updateChildren(map).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toasty.error(EditProfileActivity.this, "adding bio to database failed", Toast.LENGTH_SHORT, true).show();
+                    Log.d(TAG, "adding bio to database failed...: " + e.getMessage());
+                    dbFail = true;
+                    Log.d(TAG, "dbFail: " + dbFail);
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "adding bio to database successful");
+                }
+            });
+
+            if (dbFail) {
+                Log.d(TAG, "in dbfail case");
+                databaseReference.setValue(map).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "still failed the second time");
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "upload successful second time");
+                    }
+                });
+            }
         }
     }
 

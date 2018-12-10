@@ -16,4 +16,5 @@
     <string name="existing_photo_button_text">Edit Existing Photo</string>
     <string name="completed_photo_text">You\'re all set!</string>
     <string name="update_profile_button_text">update profile</string>
+    <string name="edit_photo_button_text">Edit Photo</string>
 </resources>

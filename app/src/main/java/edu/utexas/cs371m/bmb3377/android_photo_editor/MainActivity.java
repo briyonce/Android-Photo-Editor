@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -35,8 +37,14 @@ import android.widget.Toast;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import es.dmoral.toasty.Toasty;
+import in.shadowfax.proswipebutton.ProSwipeButton;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -48,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements
     protected Button existingPhotoButton;
     private FirebaseAuth auth;
     private static final int CAMERA_REQ = 1888;
+    private Bitmap newPhotoBitmap;
+    public static String userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +67,7 @@ public class MainActivity extends AppCompatActivity implements
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
-        this.galleryButton = findViewById(R.id.photo_gallery_button);
-        this.cameraButton = findViewById(R.id.new_photo_button);
         this.profileButton = findViewById(R.id.profile_button);
-        this.existingPhotoButton = findViewById(R.id.existing_photo_button);
 
 //        cameraButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -70,28 +77,49 @@ public class MainActivity extends AppCompatActivity implements
 //            }
 //        });
 
-        galleryButton.setOnClickListener(new View.OnClickListener() {
+        final ProSwipeButton proNewBtn = findViewById(R.id.photo_gallery_button);
+        proNewBtn.setOnSwipeListener(new ProSwipeButton.OnSwipeListener() {
             @Override
-            public void onClick(View view) {
-                Intent openGallery = new Intent(getApplicationContext(), Gallery.class);
-                startActivity(openGallery);
+            public void onSwipeConfirm() {
+                // user has swiped the btn.
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // task success! show TICK icon in ProSwipeButton
+                        Intent openGallery = new Intent(getApplicationContext(), Gallery.class);
+                        startActivity(openGallery);
+                        proNewBtn.showResultIcon(true);
+                    }
+                }, 2000);
+
+            }
+        });
+
+        final ProSwipeButton proProfileBtn =  findViewById(R.id.edit_photo_button);
+        proProfileBtn.setOnSwipeListener(new ProSwipeButton.OnSwipeListener() {
+            @Override
+            public void onSwipeConfirm() {
+                // user has swiped the btn.
+                CropImage.activity(null).setAspectRatio(1,1).setCropShape(CropImageView.CropShape.OVAL).start(MainActivity.this);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // task success! show TICK icon in ProSwipeButton
+
+                        proProfileBtn.showResultIcon(true);
+                    }
+                }, 2000);
             }
         });
 
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openProfile = new Intent(getApplicationContext(), Profile.class);
-                startActivity(openProfile);
+                Intent profileIntent = new Intent(MainActivity.this, Profile.class);
+                startActivity(profileIntent);
             }
         });
 
-        existingPhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
 
         auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
@@ -109,8 +137,10 @@ public class MainActivity extends AppCompatActivity implements
                 if (fromProfile == 1) {
                     // do nothing
                 } else if (fromRegister == 1) {
+                    userEmail = ret.getExtras().getString("email");
                     Toasty.success(this, "Welcome to " + auth.getCurrentUser().getDisplayName() + "!", Toast.LENGTH_SHORT, true).show();
                 } else if (fromLogin == 1) {
+                    userEmail = ret.getExtras().getString("email");
                     Drawable icon = getResources().getDrawable(R.drawable.blank_person);
                     Toasty.normal(getApplicationContext(), "Welcome back " + auth.getCurrentUser().getDisplayName(), icon).show();
                 } else {
@@ -123,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements
         }
 
     }
+
+
 
     public void onAuthStateChanged(FirebaseAuth dontuse) {
         if ( auth.getCurrentUser()!= null ) {
@@ -147,19 +179,30 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == CAMERA_REQ && resultCode == Activity.RESULT_OK){
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            Bundle args = new Bundle();
-            args.putParcelable("photo", photo);
-            Intent start_edit = new Intent(getApplicationContext(), NewPhoto.class);
-            start_edit.putExtras(args);
-            startActivity(start_edit, args);
-        }
-    }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            try {
+                Uri picUri = result.getUri();
+                final InputStream imageStream = getContentResolver().openInputStream(picUri);
+                newPhotoBitmap = BitmapFactory.decodeStream(imageStream);
+                Bundle args = new Bundle();
+                args.putParcelable("photo", newPhotoBitmap);
+                Intent start_edit = new Intent(getApplicationContext(), NewPhoto.class);
+                start_edit.putExtras(args);
+                startActivity(start_edit, args);
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "file not found after CropActivity: " + e.getMessage());
+            }
 
-    public void cameraButtonPressed(View view) {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQ);
+        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_CANCELED) {
+            // do nothing
+            Log.d(TAG, "user cancelled new photo upload");
+            Intent returnHome = new Intent(this, MainActivity.class);
+            startActivity(returnHome);
+        } else {
+            Log.d(TAG, "error after crop activity");
+            Toasty.error(this, "error after crop activity", Toast.LENGTH_SHORT, true ).show();
+        }
     }
 
     private void updateDisplayUserProfile() {

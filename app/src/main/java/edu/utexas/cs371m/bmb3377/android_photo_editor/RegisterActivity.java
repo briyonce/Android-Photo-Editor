@@ -105,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void register(final String name, final String username, String email, String password) {
+    public void register(final String name, final String username, final String email, String password) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -121,6 +121,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 progressDialog.dismiss();
                                 Intent landingScreenIntent = new Intent(RegisterActivity.this, MainActivity.class);
                                 landingScreenIntent.putExtra("register", 1);
+                                landingScreenIntent.putExtra("email", email);
                                 startActivity(landingScreenIntent);
                                 finish();
                             } else {
