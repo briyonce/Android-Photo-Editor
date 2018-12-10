@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +23,8 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.load.engine.Resource;
 import com.mukesh.image_processing.ImageProcessor;
 
+import java.util.ArrayList;
+
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.PhotoFilter;
 
@@ -31,46 +35,54 @@ public class NewPhoto extends AppCompatActivity {
     protected ImageView curr_image;
     protected PhotoEditorView new_image;
     protected Bitmap edited_image;
-    protected ImageView[] edited;
+    protected ArrayList<Bitmap> edited;
     protected Button cancelButton;
     protected Button doneButton;
+    protected RecyclerView imageFiltersRecyclerView;
     private static String TAG = "NewPhoto.java";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_photo);
-        edited = new ImageView[6];
+        edited = new ArrayList<Bitmap>();
         Bitmap photo  = BitmapFactory.decodeByteArray(getIntent()
                 .getByteArrayExtra("byteArray"),0,getIntent().getByteArrayExtra("byteArray").length);
         Log.d(TAG, "photo bitmap got created");
         curr_image = findViewById(R.id.curr_photo);
         curr_image.setImageBitmap(photo);
         curr_image.setScaleType(ImageView.ScaleType.FIT_XY);
-        edited[0] = findViewById(R.id.edited_one);
-        edited[1] = findViewById(R.id.edited_two);
-        edited[2] = findViewById(R.id.edited_three);
-        edited[3] = findViewById(R.id.edited_four);
-        edited[4] = findViewById(R.id.edited_five);
-        edited[5] = findViewById(R.id.edited_six);
-
         edited_image = photo;
         ImageProcessor imageProcessor = new ImageProcessor();
         Bitmap b = photo;
         imageProcessor.applyBlackFilter(b);
-        edited[0].setImageBitmap(b);
-        imageProcessor.tintImage(edited_image, 5);
-        edited[1].setImageBitmap(edited_image);
-        imageProcessor.applyGaussianBlur(edited_image);
-        edited[2].setImageBitmap(edited_image);
-        imageProcessor.applySaturationFilter(edited_image, 5);
-        edited[3].setImageBitmap(edited_image);
-        imageProcessor.createContrast(edited_image, 3.5);
-        edited[4].setImageBitmap(edited_image);
-        imageProcessor.applySnowEffect(edited_image);
-        edited[5].setImageBitmap(edited_image);
-        imageProcessor.doInvert(edited_image);
-        curr_image.setImageBitmap(edited_image);
+        edited.add(b);
+        edited.add(b);
+        edited.add(b);
+        edited.add(b);
+        edited.add(b);
+        edited.add(b);
+
+        imageFiltersRecyclerView = findViewById(R.id.photo_recycler_view);
+        imageFiltersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        imageFiltersRecyclerView.setAdapter(new PhotoAdapter(this, edited));
+//        edited_image = photo;
+//        ImageProcessor imageProcessor = new ImageProcessor();
+//        Bitmap b = photo;
+//        imageProcessor.applyBlackFilter(b);
+//        edited[0].setImageBitmap(b);
+//        imageProcessor.tintImage(edited_image, 5);
+//        edited[1].setImageBitmap(edited_image);
+//        imageProcessor.applyGaussianBlur(edited_image);
+//        edited[2].setImageBitmap(edited_image);
+//        imageProcessor.applySaturationFilter(edited_image, 5);
+//        edited[3].setImageBitmap(edited_image);
+//        imageProcessor.createContrast(edited_image, 3.5);
+//        edited[4].setImageBitmap(edited_image);
+//        imageProcessor.applySnowEffect(edited_image);
+//        edited[5].setImageBitmap(edited_image);
+//        imageProcessor.doInvert(edited_image);
+//        curr_image.setImageBitmap(edited_image);
 
         cancelButton = findViewById(R.id.cancel_button);
 
