@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 import com.bumptech.glide.load.engine.Resource;
 import com.mukesh.image_processing.ImageProcessor;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
@@ -67,6 +70,7 @@ public class NewPhoto extends AppCompatActivity {
                             @Override
                             public void onItemClick(FilteredImageOption item) {
                                 Toasty.info(NewPhoto.this, item.filterName + " selected", Toast.LENGTH_SHORT, true).show();
+                                curr_image.setImageBitmap(item.getPhoto());
                             }
                         }));
                     }
@@ -111,6 +115,20 @@ public class NewPhoto extends AppCompatActivity {
         });
 
         doneButton = findViewById(R.id.next_button);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BitmapDrawable drawable = (BitmapDrawable) curr_image.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
+                Intent startPost = new Intent(getApplicationContext(), PostActivity.class);
+                Log.d(TAG, "intent created");
+                startPost.putExtra("byteArray", bs.toByteArray());
+                Log.d(TAG, "put bitmap into bundle");
+                startActivity(startPost);
+            }
+        });
     }
 
     private void loadImages() {

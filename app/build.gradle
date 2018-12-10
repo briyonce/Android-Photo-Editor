@@ -68,6 +68,8 @@ dependencies {
 
     //
     implementation 'com.github.frank-zhu:pullzoomview:1.0.0'
+
+    implementation 'com.github.andremion:counterfab:1.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -3,11 +3,14 @@ package edu.utexas.cs371m.bmb3377.android_photo_editor;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -45,6 +48,7 @@ public class PostActivity extends AppCompatActivity {
     ImageView exportSharePic;
     Button editBut;
     Button shareBut;
+    private static String TAG = "PostActivity.java";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,14 +99,20 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // THIS NEEDS TO BE CHANGED!!! NEEDS TO RETURN TO PHOTO EDIT ACTIVITY
-                Intent returnToEdit = new Intent(PostActivity.this, MainActivity.class);
-                startActivity(returnToEdit);
+                finish();
             }
         });
 
-        CropImage.activity(new Uri.Builder().build())
-                .setAspectRatio(1, 1)
-                .start(PostActivity.this);
+        Bitmap photo  = BitmapFactory.decodeByteArray(getIntent()
+                .getByteArrayExtra("byteArray"),0,getIntent().getByteArrayExtra("byteArray").length);
+        Log.d(TAG, "photo bitmap got created");
+//        newImage = findViewById(R.id.finalized_photo);
+//        newImage.setImageBitmap(photo);
+//        newImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
+//        CropImage.activity(new Uri.Builder().build())
+//                .setAspectRatio(1, 1)
+//                .start(PostActivity.this);
     }
 
     private String getFileExtension(Uri uri) {

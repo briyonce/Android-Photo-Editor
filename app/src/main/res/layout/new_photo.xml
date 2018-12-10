@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".3"
-        android:background="@color/colorAccent"
+        android:background="@color/darkGrey"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/curr_photo"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".5"
-        android:background="@color/colorPrimary"
+        android:background="@color/darkGrey"
         android:orientation="horizontal"
         android:weightSum="1"
         android:gravity="center">

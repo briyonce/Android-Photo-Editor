@@ -67,6 +67,9 @@
             android:label="Login Page"
             android:parentActivityName=".MainActivity">
         </activity>
-
+        <activity android:name=".PostActivity"
+            android:label="Final Page"
+            android:parentActivityName=".NewPhoto">
+        </activity>
     </application>
 </manifest>
