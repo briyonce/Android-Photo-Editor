@@ -1,8 +1,10 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
+import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -10,7 +12,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -186,6 +191,21 @@ public class MainActivity extends AppCompatActivity implements
                 Uri picUri = result.getUri();
                 final InputStream imageStream = getContentResolver().openInputStream(picUri);
                 newPhotoBitmap = BitmapFactory.decodeStream(imageStream);
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "requesting storage permissions...");
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    } else {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    }
+                } else {
+                    Log.d(TAG, "already have storage write permissions");
+                    // we have permission why would we do anything? smh
+                }
                 MediaStore.Images.Media.insertImage(getContentResolver(), newPhotoBitmap, "title,", "description");
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
                 newPhotoBitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
@@ -208,6 +228,28 @@ public class MainActivity extends AppCompatActivity implements
             Log.d(TAG, "error after crop activity");
             Toasty.error(this, "error after crop activity", Toast.LENGTH_SHORT, true ).show();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "requestPermissions result is in: " + requestCode);
+        switch (requestCode) {
+            case 1: {
+                Log.d(TAG, "requestPermissions result is in");
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(MainActivity.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "storage write permissions granted");
+                        // we got it boys
+                    }
+                } else {
+                    // big sad
+                    Log.d(TAG, "not granted storage permissions");
+                }
+            }
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void updateDisplayUserProfile() {
