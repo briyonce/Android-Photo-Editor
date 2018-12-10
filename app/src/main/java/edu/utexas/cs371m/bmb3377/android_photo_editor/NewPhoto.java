@@ -27,6 +27,7 @@ public class NewPhoto extends AppCompatActivity implements OnSaveBitmap {
     protected PhotoEditorView new_image;
     protected Bitmap edited_image;
     protected ImageView[] edited;
+    private static String TAG = "NewPhoto.java";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,21 +53,27 @@ public class NewPhoto extends AppCompatActivity implements OnSaveBitmap {
                 .build();
         pEdit.setFilterEffect(PhotoFilter.NEGATIVE);
         pEdit.saveAsBitmap(this);
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
         edited[0].setImageBitmap(edited_image);
         pEdit.setFilterEffect(PhotoFilter.FISH_EYE);
         pEdit.saveAsBitmap(this);
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
         edited[1].setImageBitmap(edited_image);
         pEdit.setFilterEffect(PhotoFilter.NEGATIVE);
         pEdit.saveAsBitmap(this);
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
         edited[2].setImageBitmap(edited_image);
         pEdit.setFilterEffect(PhotoFilter.FISH_EYE);
         pEdit.saveAsBitmap(this);
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
         edited[3].setImageBitmap(edited_image);
         pEdit.setFilterEffect(PhotoFilter.NEGATIVE);
         pEdit.saveAsBitmap(this);
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
         edited[4].setImageBitmap(edited_image);
         pEdit.setFilterEffect(PhotoFilter.FISH_EYE);
         pEdit.saveAsBitmap(this);
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
         edited[5].setImageBitmap(edited_image);
         transitioner = new Transitioner(cameraLayout, galleryLayout);
         transitioner.animateTo(30, (long) 500, new BounceInterpolator());
@@ -93,7 +100,10 @@ public class NewPhoto extends AppCompatActivity implements OnSaveBitmap {
     }
 
     public void onBitmapReady(Bitmap saveBitmap){
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
+        Log.d(TAG, "saveBitmap null: " + (saveBitmap == null));
         edited_image = saveBitmap;
+        Log.d(TAG, "edited_image null: " + (edited_image == null));
     }
 
     public void onFailure(Exception e){

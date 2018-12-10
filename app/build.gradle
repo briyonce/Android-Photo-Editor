@@ -55,6 +55,7 @@ dependencies {
     implementation ('org.eclipse.paho:org.eclipse.paho.android.service:1.0.2') {
         exclude module: 'support-v4'
     }
+    implementation 'ja.burhanrashid52:photoeditor:0.3.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

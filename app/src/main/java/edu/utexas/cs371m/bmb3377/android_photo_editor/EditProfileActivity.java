@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,6 +36,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.zxing.client.result.EmailDoCoMoResultParser;
@@ -65,11 +67,13 @@ public class EditProfileActivity extends AppCompatActivity {
     private Uri profileUri;
 
     private boolean changesMade = false;
+    private boolean profilePicUpdated = false;
     private final String TAG = "EditProfileActivity.java";
     private FirebaseAuth auth;
     private FirebaseUser user;
     private TextView editProfilePicText;
     private DatabaseReference reference;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,12 +107,17 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // update user
-                updateProfilePhoto();
+                progressDialog = new ProgressDialog(EditProfileActivity.this);
+                progressDialog.setMessage("updating profile...");
+                progressDialog.show();
+                if (profilePicUpdated) {
+                    updateProfilePhoto();
+                    profilePicUpdated = false;
+                }
                 updateProfileInfo();
-                getPhotoAsync();
+                progressDialog.dismiss();
                 Toasty.success(EditProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT, true).show();
                 changesMade = false;
-                getPhotoAsync();
             }
         });
 
@@ -169,27 +178,38 @@ public class EditProfileActivity extends AppCompatActivity {
                 final InputStream imageStream = getContentResolver().openInputStream(profileUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 profilePictureView.setImageBitmap(selectedImage);
-//                hasImageChanged = true;
+                changesMade = true;
+                profilePicUpdated = true;
 
             } catch (FileNotFoundException e) {
-
+                Log.d(TAG, "file not found after CropActivity: " + e.getMessage());
             }
 
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_CANCELED) {
             // do nothing
+            Log.d(TAG, "user cancelled new photo upload");
         } else {
+            Log.d(TAG, "error after crop activity");
             Toasty.error(this, "error after crop activity", Toast.LENGTH_SHORT, true ).show();
         }
     }
 
     private void updateProfileInfo() {
         String newUserName = usernameEditText.getText().toString();
-        String newBio = bioText.getText().toString();
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("updating profile...");
-        progressDialog.show();
         if (!TextUtils.isEmpty(newUserName) && (newUserName.length() <= 20)) {
             UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(newUserName).build();
+            user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()) {
+                        Log.d(TAG, "user profile updated successfully");
+                    } else {
+                        Log.d(TAG, "user profile update failure");
+                        progressDialog.dismiss();
+                        Toasty.error(EditProfileActivity.this, "this username is already in use.", Toast.LENGTH_SHORT, true).show();
+                    }
+                }
+            });
 
         } else if (newUserName.length() > 20) {
             progressDialog.dismiss();
@@ -200,12 +220,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
     private void updateProfilePhoto() {
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("updating profile photo...");
-        progressDialog.show();
-        Log.d(TAG, "in updateProfilePhoto");
-        Log.d(TAG, profileUri.toString());
-        if (profileUri != null) {
+        if (profilePicUpdated) {
+            Log.d(TAG, "updating profile photo...");
+            Log.d(TAG, profileUri.toString());
             profilePictureView.setDrawingCacheEnabled(true);
             profilePictureView.buildDrawingCache();
             Bitmap bitmap = profilePictureView.getDrawingCache();
@@ -213,18 +230,13 @@ public class EditProfileActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] data = byteArrayOutputStream.toByteArray();
 
-
-            Log.d(TAG, "profileUri != null.");
             final String photoUrl = profilePictureView.getDrawingCache().hashCode() + System.currentTimeMillis() + ".jpg";
             final StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(photoUrl);
             Log.d(TAG, "before uploadTask");
-            final UploadTask uploadTask = storageReference.putBytes(data);
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            storageReference.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    HashMap<String, Object> map = new HashMap<>();
                     Log.d(TAG, "new uri: " + photoUrl);
-
                     storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -234,9 +246,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()) {
-                                        Log.d(TAG, "user profile updated successfully");
-                                        progressDialog.dismiss();
-                                        Toasty.success(EditProfileActivity.this, "successfully updated user profile pic!", Toast.LENGTH_SHORT, true).show();
+                                        Log.d(TAG, "user profile photo updated successfully");
                                     } else {
                                         Log.d(TAG, "user profile update failure");
                                         progressDialog.dismiss();
@@ -248,22 +258,30 @@ public class EditProfileActivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
                             Log.d(TAG, "failed to get download uri: " + e.getMessage());
                             Toasty.error(EditProfileActivity.this, "failed to get download uri", Toast.LENGTH_SHORT, true).show();
                         }
                     });
-                    progressDialog.dismiss();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
                     Log.d(TAG, "upload task failure: " + e.getMessage());
                     Toasty.error(EditProfileActivity.this, "error: " + e.getMessage(), Toast.LENGTH_LONG, true).show();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            .getTotalByteCount());
+                    Log.d(TAG, "making some progress");
+                    progressDialog.setMessage("Uploaded "+(int)progress+"%");
                 }
             });
         } else {
             Log.d(TAG, "no image selected for upload");
-            Toasty.info(this, "No Image Selected!", Toast.LENGTH_SHORT, true).show();
         }
     }
 
@@ -279,32 +297,32 @@ public class EditProfileActivity extends AppCompatActivity {
             }
             Log.d(TAG, "equality: " + url.equals("https://firebasestorage.googleapis.com/v0/b/mobile-computing-project.appspot.com/o/utex-bevo.png?alt=media&token=559dd5f0-b294-4a35-968b-0b2003a012c6"));
         } catch (UnsupportedEncodingException e) {
+            progressDialog.dismiss();
             Log.d(TAG, "decoding error: " + e.getMessage());
         }
         Log.d(TAG, "url: " + url);
-// Create a reference to a file from a Google Cloud Storage URI
+
         if (url != null) {
             Log.d(TAG, "url is not null");
             StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
             Log.d(TAG, "gsReference created");
-//
+
             gsReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
-                    // handle success
                     Log.d(TAG, "photo download success");
-                    Toasty.info(EditProfileActivity.this, "photo uri: " + uri, Toast.LENGTH_SHORT, true).show();
                     Picasso.with(EditProfileActivity.this).load(uri).into(profilePictureView);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
+                    progressDialog.dismiss();
+                    Toasty.error(EditProfileActivity.this, "error getting photo download url", Toast.LENGTH_SHORT, true).show();
                     Log.d(TAG, "error: " + exception.getMessage());
-
                 }
             });
         } else {
+            progressDialog.dismiss();
             Log.d(TAG, "photo uri is null");
             Toasty.info(EditProfileActivity.this, "photo uri is null", Toast.LENGTH_SHORT, true).show();
         }

@@ -54,15 +54,18 @@
             <ImageView
                 android:id="@+id/edited_one"
                 android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_height="50dp"
+                android:src="@drawable/blank_person"/>
             <ImageView
                 android:id="@+id/edited_two"
                 android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_height="50dp"
+                android:src="@drawable/blank_person"/>
             <ImageView
                 android:id="@+id/edited_three"
                 android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_height="50dp"
+                android:src="@drawable/blank_person"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -71,15 +74,18 @@
             <ImageView
                 android:id="@+id/edited_four"
                 android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_height="50dp"
+                android:src="@drawable/blank_person"/>
             <ImageView
                 android:id="@+id/edited_five"
                 android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_height="50dp"
+                android:src="@drawable/blank_person"/>
             <ImageView
                 android:id="@+id/edited_six"
                 android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_height="50dp"
+                android:src="@drawable/blank_person"/>
         </LinearLayout>
     </LinearLayout>
 
