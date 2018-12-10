@@ -51,7 +51,6 @@ public class NewPhoto extends AppCompatActivity {
     private static String TAG = "NewPhoto.java";
     protected Handler handler;
     protected Handler foregroundHandler;
-    private boolean paused;
     private static final int DONE_LOADING = 100;
     private ProgressDialog progressDialog;
 

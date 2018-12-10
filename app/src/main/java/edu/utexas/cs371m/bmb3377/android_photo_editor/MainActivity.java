@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements
     private FirebaseAuth auth;
     private Bitmap newPhotoBitmap;
     public static String userEmail;
-    public static ProgressDialog transitionDialogue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,25 +72,17 @@ public class MainActivity extends AppCompatActivity implements
 
         this.profileButton = findViewById(R.id.profile_button);
 
-//        cameraButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent openCamera = new Intent(getApplicationContext(), NewPhoto.class);
-//                startActivity(openCamera);
-//            }
-//        });
-
         final ProSwipeButton proNewBtn = findViewById(R.id.photo_gallery_button);
         proNewBtn.setOnSwipeListener(new ProSwipeButton.OnSwipeListener() {
             @Override
             public void onSwipeConfirm() {
                 // user has swiped the btn.
+                Intent openGallery = new Intent(getApplicationContext(), Gallery.class);
+                startActivity(openGallery);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         // task success! show TICK icon in ProSwipeButton
-                        Intent openGallery = new Intent(getApplicationContext(), Gallery.class);
-                        startActivity(openGallery);
                         proNewBtn.showResultIcon(true);
                     }
                 }, 2000);

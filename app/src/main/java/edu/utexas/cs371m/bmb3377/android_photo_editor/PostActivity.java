@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +24,9 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -32,6 +35,8 @@ import com.google.firebase.storage.StorageTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
+
+import es.dmoral.toasty.Toasty;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -48,6 +53,7 @@ public class PostActivity extends AppCompatActivity {
     ImageView exportSharePic;
     Button editBut;
     Button shareBut;
+    Bitmap photo;
     private static String TAG = "PostActivity.java";
 
     @Override
@@ -58,8 +64,6 @@ public class PostActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference("photos");
 
         doneBut = findViewById(R.id.button_done);
-        exportSharePic = findViewById(R.id.export_button);
-        fbSharePic = findViewById(R.id.facebook_button);
         editBut = findViewById(R.id.edit_button);
         shareBut = findViewById(R.id.share_button);
 
@@ -68,47 +72,36 @@ public class PostActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent returnHome = new Intent(PostActivity.this, MainActivity.class);
                 startActivity(returnHome);
+                finish();
             }
         });
 
         shareBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // open system share dialogue - choose either to export to fb or save to system
-            }
-        });
-
-        exportSharePic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // save photo to system
-                // also save photo to firebase to show in app gallery
                 uploadImage();
-                Toast.makeText(getApplicationContext(), "Photo saved to image gallery!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        fbSharePic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // export photo to fb
+                String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), photo,"title", null);
+                Uri bitmapUri = Uri.parse(bitmapPath);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/png");
+                intent.putExtra(Intent.EXTRA_STREAM, bitmapUri );
+                startActivity(Intent.createChooser(intent , "Share"));
             }
         });
 
         editBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // THIS NEEDS TO BE CHANGED!!! NEEDS TO RETURN TO PHOTO EDIT ACTIVITY
                 finish();
             }
         });
 
-        Bitmap photo  = BitmapFactory.decodeByteArray(getIntent()
+        photo  = BitmapFactory.decodeByteArray(getIntent()
                 .getByteArrayExtra("byteArray"),0,getIntent().getByteArrayExtra("byteArray").length);
         Log.d(TAG, "photo bitmap got created");
-//        newImage = findViewById(R.id.finalized_photo);
-//        newImage.setImageBitmap(photo);
-//        newImage.setScaleType(ImageView.ScaleType.FIT_XY);
+        newImage = findViewById(R.id.finalized_photo);
+        newImage.setImageBitmap(photo);
+        newImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
 //        CropImage.activity(new Uri.Builder().build())
 //                .setAspectRatio(1, 1)
@@ -145,7 +138,7 @@ public class PostActivity extends AppCompatActivity {
                         Uri downloadUri = task.getResult();
                         myURl = downloadUri.toString();
 
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("posts");
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/photos");
 
                         String postID = reference.push().getKey();
 
@@ -154,12 +147,19 @@ public class PostActivity extends AppCompatActivity {
                         map.put("image", myURl);
                         map.put("owner", Auth.getInstance().getUid());
 
-                        reference.child(postID).setValue(map);
-
-                        progressDialog.dismiss();
-
-                        startActivity(new Intent(PostActivity.this, MainActivity.class));
-                        finish();
+                        reference.child(postID).setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toasty.success(getApplicationContext(), "successfully uploaded photo!", Toast.LENGTH_SHORT, true).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                                Toasty.error(getApplicationContext(), "failed to update profile", Toast.LENGTH_SHORT, true).show();
+                                Log.d(TAG, "Photo upload error: " + e.getMessage());
+                            }
+                        });
                     } else {
                         Toast.makeText(PostActivity.this, "upload to firebase failed", Toast.LENGTH_SHORT).show();
                     }
@@ -167,10 +167,12 @@ public class PostActivity extends AppCompatActivity {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
                     Toast.makeText(PostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
+            progressDialog.dismiss();
             Toast.makeText(this, "No image selected!", Toast.LENGTH_SHORT).show();
         }
     }

@@ -14,12 +14,17 @@
             android:textAllCaps="true"
             android:layout_gravity="center"/>
         <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_button_text"/>
+
+        <Button
             android:id="@+id/profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="Settings"
-            android:onClick="switchActivities"/>
+            android:text="Profile"/>
     </android.support.v7.widget.Toolbar>
     <LinearLayout
         android:id="@+id/photo_gallery"
@@ -29,6 +34,7 @@
         android:background="@color/darkGrey">
 
         <GridView
+            android:id="@+id/photo_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:isScrollContainer="true"
