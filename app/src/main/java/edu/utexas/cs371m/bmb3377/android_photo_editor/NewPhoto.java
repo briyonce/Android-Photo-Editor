@@ -54,9 +54,9 @@ public class NewPhoto extends AppCompatActivity {
         curr_image.setScaleType(ImageView.ScaleType.FIT_XY);
         edited_image = photo;
         ImageProcessor imageProcessor = new ImageProcessor();
-        Bitmap b = photo;
-        imageProcessor.applyBlackFilter(b);
+        Bitmap b = imageProcessor.applyBlackFilter(photo);
         edited.add(b);
+
         edited.add(b);
         edited.add(b);
         edited.add(b);
@@ -64,8 +64,10 @@ public class NewPhoto extends AppCompatActivity {
         edited.add(b);
 
         imageFiltersRecyclerView = findViewById(R.id.photo_recycler_view);
-        imageFiltersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        imageFiltersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         imageFiltersRecyclerView.setAdapter(new PhotoAdapter(this, edited));
+//        imageFiltersRecyclerView.getLayoutParams().height = 80;
+//        imageFiltersRecyclerView.getLayoutParams().width = 60;
 //        edited_image = photo;
 //        ImageProcessor imageProcessor = new ImageProcessor();
 //        Bitmap b = photo;
