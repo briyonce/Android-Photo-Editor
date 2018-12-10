@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import java.util.ArrayList;
 
@@ -14,18 +15,22 @@ public class PhotoAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     Context c;
     ArrayList<FilteredImageOption> filteredImages;
+    private final OnItemClickListener listener;
 
-    public PhotoAdapter(Context c, ArrayList<FilteredImageOption> photos) {
+    public interface OnItemClickListener {
+        void onItemClick(FilteredImageOption item);
+    }
+
+    public PhotoAdapter(Context c, ArrayList<FilteredImageOption> photos, OnItemClickListener listener) {
+        this.listener = listener;
         this.c = c;
         this.filteredImages = photos;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Bitmap currentBitmap = filteredImages.get(position).getPhoto();
-        String filterName = filteredImages.get(position).getFilterName();
-        holder.image.setImageBitmap(currentBitmap);
-        holder.name.setText(filterName);
+        FilteredImageOption option = filteredImages.get(position);
+        holder.bind(option, listener);
     }
 
     @NonNull

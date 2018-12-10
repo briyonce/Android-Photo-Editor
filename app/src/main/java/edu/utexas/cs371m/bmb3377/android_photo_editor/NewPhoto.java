@@ -23,12 +23,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.Resource;
 import com.mukesh.image_processing.ImageProcessor;
 
 import java.util.ArrayList;
 
+import es.dmoral.toasty.Toasty;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.PhotoFilter;
 
@@ -61,7 +63,12 @@ public class NewPhoto extends AppCompatActivity {
                     if(imageFiltersRecyclerView != null && edited != null) {
                         progressDialog.dismiss();
                         imageFiltersRecyclerView.setLayoutManager(new LinearLayoutManager(NewPhoto.this, LinearLayoutManager.HORIZONTAL, false));
-                        imageFiltersRecyclerView.setAdapter(new PhotoAdapter(NewPhoto.this, edited));
+                        imageFiltersRecyclerView.setAdapter(new PhotoAdapter(NewPhoto.this, edited, new PhotoAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(FilteredImageOption item) {
+                                Toasty.info(NewPhoto.this, item.filterName + " selected", Toast.LENGTH_SHORT, true).show();
+                            }
+                        }));
                     }
                     break;
             }
