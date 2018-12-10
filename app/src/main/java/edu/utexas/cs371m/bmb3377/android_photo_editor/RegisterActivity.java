@@ -137,7 +137,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-        Auth.getInstance().user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     //handles back button

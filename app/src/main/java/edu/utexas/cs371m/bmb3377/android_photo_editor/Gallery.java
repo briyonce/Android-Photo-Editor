@@ -2,16 +2,21 @@ package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
@@ -30,7 +37,8 @@ public class Gallery extends AppCompatActivity {
     protected ProgressDialog progressDialog;
     protected Handler handler;
     protected Handler foregroundHandler;
-    protected GridView gridView;
+    protected RecyclerView gallery;
+    protected ArrayList<Drawable> demo_images;
     private static final int DONE_LOADING = 100;
 
     class MyCallback implements Handler.Callback {
@@ -40,19 +48,18 @@ public class Gallery extends AppCompatActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case DONE_LOADING:
-                    gridView = findViewById(R.id.photo_grid);
+                    gallery = findViewById(R.id.photo_grid);
                     progressDialog.dismiss();
-//                    if(gridView != null && edited != null) {
-//                        progressDialog.dismiss();
-//                        imageFiltersRecyclerView.setLayoutManager(new LinearLayoutManager(NewPhoto.this, LinearLayoutManager.HORIZONTAL, false));
-//                        imageFiltersRecyclerView.setAdapter(new PhotoAdapter(NewPhoto.this, edited, new PhotoAdapter.OnItemClickListener() {
-//                            @Override
-//                            public void onItemClick(FilteredImageOption item) {
-//                                Toasty.info(NewPhoto.this, item.filterName + " selected", Toast.LENGTH_SHORT, true).show();
-//                                curr_image.setImageBitmap(item.getPhoto());
-//                            }
-//                        }));
-//                    }
+                    if(gallery != null && demo_images != null) {
+                        progressDialog.dismiss();
+                        gallery.setLayoutManager(new LinearLayoutManager(Gallery.this, LinearLayoutManager.HORIZONTAL, false));
+                        gallery.setAdapter(new ImageAdapter(Gallery.this, demo_images, new ImageAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(Drawable item) {
+                                        Toasty.info(Gallery.this, "photo selected", Toast.LENGTH_SHORT, true).show();
+                                    }
+                                }));
+                    }
                     break;
             }
             return true;
@@ -81,7 +88,7 @@ public class Gallery extends AppCompatActivity {
                 startActivity(profileIntent);
             }
         });
-
+        demo_images = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading photos...");
         progressDialog.show();
@@ -98,6 +105,10 @@ public class Gallery extends AppCompatActivity {
     }
 
     private void loadImages() {
+        demo_images.add(getResources().getDrawable(R.drawable.dog1));
+        demo_images.add(getResources().getDrawable(R.drawable.dog2));
+        demo_images.add(getResources().getDrawable(R.drawable.dog3));
+        demo_images.add(getResources().getDrawable(R.drawable.dog4));
         final StorageReference fileRef = FirebaseStorage.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("photos");
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("photos/");
     }

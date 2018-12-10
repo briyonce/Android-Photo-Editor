@@ -217,11 +217,13 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             });
             if (!TextUtils.isEmpty(bio) && (bio.length() <= 70)) {
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid() + "/bio");
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                 Log.d(TAG, "adding bio to database...");
                 HashMap<String, Object> map = new HashMap<>();
+                map.put("username", newUserName);
                 map.put("bio", bio);
-                databaseReference.updateChildren(map).addOnFailureListener(new OnFailureListener() {
+                databaseReference.setValue(map).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
@@ -241,7 +243,7 @@ public class EditProfileActivity extends AppCompatActivity {
             Toasty.error(this, "Username must be shorter than 8 characters",
                     Toast.LENGTH_SHORT, true).show();
         } else if (!TextUtils.isEmpty(bio) && (bio.length() <= 70)) {
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid() + "/bio");
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/bio");
             Log.d(TAG, "adding bio to database...");
             HashMap<String, Object> map = new HashMap<>();
             map.put("bio", bio);

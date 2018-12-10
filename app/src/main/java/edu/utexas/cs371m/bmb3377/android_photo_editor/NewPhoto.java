@@ -38,11 +38,7 @@ import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.PhotoFilter;
 
 public class NewPhoto extends AppCompatActivity {
-    private Transitioner transitioner;
-    protected LinearLayout cameraLayout;
-    protected LinearLayout galleryLayout;
     protected ImageView curr_image;
-    protected PhotoEditorView new_image;
     protected Bitmap photo;
     protected ArrayList<FilteredImageOption> edited;
     protected Button cancelButton;

@@ -93,6 +93,7 @@
             android:orientation="vertical"
             android:background="@color/lightGrey">
             <TextView
+                android:id="@+id/bio_text"
                 android:gravity="center"
                 android:text="bio"
                 android:layout_width="match_parent"

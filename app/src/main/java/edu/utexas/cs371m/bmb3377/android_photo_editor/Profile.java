@@ -51,6 +51,7 @@ public class Profile extends AppCompatActivity {
     private FirebaseUser user;
     private TextView editProfileText;
     private TextView usernameText;
+    private TextView bioText;
     private DatabaseReference reference;
 
     @Override
@@ -72,7 +73,12 @@ public class Profile extends AppCompatActivity {
             }
         });
 
+
         reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+        DatabaseReference ref = reference.child("bio");
+
+
+        bioText = findViewById(R.id.bio_text);
 
 
         if (user.getPhotoUrl() != null) {

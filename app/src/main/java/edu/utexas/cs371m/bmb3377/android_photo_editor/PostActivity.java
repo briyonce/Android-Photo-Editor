@@ -145,9 +145,9 @@ public class PostActivity extends AppCompatActivity {
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("postID", postID);
                         map.put("image", myURl);
-                        map.put("owner", Auth.getInstance().getUid());
+                        map.put("owner", FirebaseAuth.getInstance().getUid());
 
-                        reference.child(postID).setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        reference.setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toasty.success(getApplicationContext(), "successfully uploaded photo!", Toast.LENGTH_SHORT, true).show();
