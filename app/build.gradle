@@ -63,6 +63,10 @@ dependencies {
     }
 
     implementation 'in.shadowfax:proswipebutton:1.1'
+
+    implementation 'com.github.mukeshsolanki:photofilter:1.0.2'
+
+    implementation 'com.github.frank-zhu:pullzoomview:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

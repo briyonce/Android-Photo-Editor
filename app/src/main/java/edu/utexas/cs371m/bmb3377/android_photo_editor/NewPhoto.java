@@ -1,6 +1,7 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,13 +14,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.load.engine.Resource;
+import com.mukesh.image_processing.ImageProcessor;
 
-import ja.burhanrashid52.photoeditor.OnSaveBitmap;
-import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.PhotoFilter;
 
-public class NewPhoto extends AppCompatActivity implements OnSaveBitmap {
+public class NewPhoto extends AppCompatActivity {
     private Transitioner transitioner;
     protected LinearLayout cameraLayout;
     protected LinearLayout galleryLayout;
@@ -33,50 +33,40 @@ public class NewPhoto extends AppCompatActivity implements OnSaveBitmap {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_photo);
-        edited = new ImageView[6];
-        cameraLayout = findViewById(R.id.camera_holder);
-        galleryLayout = findViewById(R.id.filter_gallery);
+//        edited = new ImageView[6];
+//        cameraLayout = findViewById(R.id.camera_holder);
+//        galleryLayout = findViewById(R.id.filter_gallery);
         Bitmap photo = (Bitmap) getIntent().getExtras().getParcelable("photo");
         Log.d("NewPhoto: ", "got created");
         curr_image = findViewById(R.id.curr_photo);
-        new_image = findViewById(R.id.recent_photo);
         curr_image.setImageBitmap(photo);
-        new_image.getSource().setImageBitmap(photo);
-        edited[0] = findViewById(R.id.edited_one);
-        edited[1] = findViewById(R.id.edited_two);
-        edited[2] = findViewById(R.id.edited_three);
-        edited[3] = findViewById(R.id.edited_four);
-        edited[4] = findViewById(R.id.edited_five);
-        edited[5] = findViewById(R.id.edited_six);
-        PhotoEditor pEdit = new PhotoEditor.Builder(this, new_image)
-                .setPinchTextScalable(true)
-                .build();
-        pEdit.setFilterEffect(PhotoFilter.NEGATIVE);
-        pEdit.saveAsBitmap(this);
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
-        edited[0].setImageBitmap(edited_image);
-        pEdit.setFilterEffect(PhotoFilter.FISH_EYE);
-        pEdit.saveAsBitmap(this);
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
-        edited[1].setImageBitmap(edited_image);
-        pEdit.setFilterEffect(PhotoFilter.NEGATIVE);
-        pEdit.saveAsBitmap(this);
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
-        edited[2].setImageBitmap(edited_image);
-        pEdit.setFilterEffect(PhotoFilter.FISH_EYE);
-        pEdit.saveAsBitmap(this);
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
-        edited[3].setImageBitmap(edited_image);
-        pEdit.setFilterEffect(PhotoFilter.NEGATIVE);
-        pEdit.saveAsBitmap(this);
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
-        edited[4].setImageBitmap(edited_image);
-        pEdit.setFilterEffect(PhotoFilter.FISH_EYE);
-        pEdit.saveAsBitmap(this);
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
-        edited[5].setImageBitmap(edited_image);
-        transitioner = new Transitioner(cameraLayout, galleryLayout);
-        transitioner.animateTo(30, (long) 500, new BounceInterpolator());
+//        curr_image.getCropToPadding(true);
+//        curr_image.setScaleType(ImageView.ScaleType.FIT_XY);
+//        edited[0] = findViewById(R.id.edited_one);
+//        edited[1] = findViewById(R.id.edited_two);
+//        edited[2] = findViewById(R.id.edited_three);
+//        edited[3] = findViewById(R.id.edited_four);
+//        edited[4] = findViewById(R.id.edited_five);
+//        edited[5] = findViewById(R.id.edited_six);
+//
+//        edited_image = photo;
+        ImageProcessor imageProcessor = new ImageProcessor();
+//        Bitmap b = photo;
+//        imageProcessor.tintImage(edited_image, 5);
+//        edited[1].setImageBitmap(edited_image);
+////        Bitmap blurBitmap = photo;
+//        imageProcessor.applyGaussianBlur(edited_image);
+//        edited[2].setImageBitmap(edited_image);
+////        Bitmap saturationBitmap = photo;
+//        imageProcessor.applySaturationFilter(edited_image, 5);
+//        edited[3].setImageBitmap(edited_image);
+//        imageProcessor.createContrast(edited_image, 3.5);
+//        edited[4].setImageBitmap(edited_image);
+//        imageProcessor.applySnowEffect(edited_image);
+//        edited[5].setImageBitmap(edited_image);
+        imageProcessor.doInvert(edited_image);
+        curr_image.setImageBitmap(edited_image);
+////
 
     }
 
@@ -97,13 +87,6 @@ public class NewPhoto extends AppCompatActivity implements OnSaveBitmap {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onBitmapReady(Bitmap saveBitmap){
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
-        Log.d(TAG, "saveBitmap null: " + (saveBitmap == null));
-        edited_image = saveBitmap;
-        Log.d(TAG, "edited_image null: " + (edited_image == null));
     }
 
     public void onFailure(Exception e){
