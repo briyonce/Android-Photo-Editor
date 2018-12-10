@@ -120,6 +120,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 Toasty.success(EditProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT, true).show();
                 changesMade = false;
+
             }
         });
 
@@ -136,7 +137,7 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // if there are unsaved changes ask the user if they're sure they're done
-                if (changesMade) {
+                if (!TextUtils.isEmpty(usernameEditText.getText().toString()) || !TextUtils.isEmpty(bioText.getText().toString()) || changesMade) {
                     createDialog();
                 } else {
                     goBack();
@@ -198,7 +199,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void updateProfileInfo() {
         String newUserName = usernameEditText.getText().toString();
-        String bio = bioText.getText().toString();
+        final String bio = bioText.getText().toString();
         if (!TextUtils.isEmpty(newUserName) && (newUserName.length() <= 20)) {
             Log.d(TAG, "updating username...");
             UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(newUserName).build();
@@ -206,6 +207,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()) {
+                        usernameEditText.setText("");
                         Log.d(TAG, "user profile updated successfully");
                     } else {
                         Log.d(TAG, "user profile update failure");
@@ -229,6 +231,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 }).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        bioText.setText("");
                         Log.d(TAG, "adding bio to database successful");
                     }
                 });
@@ -254,6 +257,7 @@ public class EditProfileActivity extends AppCompatActivity {
             }).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
+                    bioText.setText("");
                     Log.d(TAG, "adding bio to database successful");
                 }
             });
