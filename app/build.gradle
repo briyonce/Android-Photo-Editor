@@ -66,6 +66,7 @@ dependencies {
 
     implementation 'com.github.mukeshsolanki:photofilter:1.0.2'
 
+    //
     implementation 'com.github.frank-zhu:pullzoomview:1.0.0'
 }
 

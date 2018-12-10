@@ -17,4 +17,6 @@
     <string name="completed_photo_text">You\'re all set!</string>
     <string name="update_profile_button_text">update profile</string>
     <string name="edit_photo_button_text">Edit Photo</string>
+    <string name="cancel_button_text">cancel</string>
+    <string name="next_button_text">Next</string>
 </resources>

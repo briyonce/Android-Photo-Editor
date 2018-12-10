@@ -40,6 +40,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -185,11 +186,15 @@ public class MainActivity extends AppCompatActivity implements
                 Uri picUri = result.getUri();
                 final InputStream imageStream = getContentResolver().openInputStream(picUri);
                 newPhotoBitmap = BitmapFactory.decodeStream(imageStream);
-                Bundle args = new Bundle();
-                args.putParcelable("photo", newPhotoBitmap);
+                MediaStore.Images.Media.insertImage(getContentResolver(), newPhotoBitmap, "title,", "description");
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                newPhotoBitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
+                Log.d(TAG, "about to create intent");
                 Intent start_edit = new Intent(getApplicationContext(), NewPhoto.class);
-                start_edit.putExtras(args);
-                startActivity(start_edit, args);
+                Log.d(TAG, "intent created");
+                start_edit.putExtra("byteArray", bs.toByteArray());
+                Log.d(TAG, "put bitmap into bundle");
+                startActivity(start_edit);
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "file not found after CropActivity: " + e.getMessage());
             }
