@@ -25,7 +25,8 @@
         android:id="@+id/photo_gallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@color/darkGrey">
 
         <GridView
             android:layout_width="match_parent"

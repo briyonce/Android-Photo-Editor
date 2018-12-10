@@ -2,6 +2,7 @@ package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -56,14 +57,11 @@ import in.shadowfax.proswipebutton.ProSwipeButton;
 public class MainActivity extends AppCompatActivity implements
         FirebaseAuth.AuthStateListener {
     public static String TAG = "MainActivity.java";
-    protected Button galleryButton;
-    protected Button cameraButton;
     protected Button profileButton;
-    protected Button existingPhotoButton;
     private FirebaseAuth auth;
-    private static final int CAMERA_REQ = 1888;
     private Bitmap newPhotoBitmap;
     public static String userEmail;
+    public static ProgressDialog transitionDialogue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

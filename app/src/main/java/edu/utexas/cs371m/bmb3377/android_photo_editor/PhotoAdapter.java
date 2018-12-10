@@ -9,22 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PhotoAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     Context c;
-    ArrayList<Bitmap> filteredEffects;
+    ArrayList<FilteredImageOption> filteredImages;
 
-    public PhotoAdapter(Context c, ArrayList<Bitmap> photos) {
+    public PhotoAdapter(Context c, ArrayList<FilteredImageOption> photos) {
         this.c = c;
-        this.filteredEffects = photos;
+        this.filteredImages = photos;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Bitmap currentBitmap = filteredEffects.get(position);
+        Bitmap currentBitmap = filteredImages.get(position).getPhoto();
+        String filterName = filteredImages.get(position).getFilterName();
         holder.image.setImageBitmap(currentBitmap);
+        holder.name.setText(filterName);
     }
 
     @NonNull
@@ -36,6 +37,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public int getItemCount() {
-        return filteredEffects.size();
+        return filteredImages.size();
     }
 }

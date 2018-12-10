@@ -1,12 +1,15 @@
 package edu.utexas.cs371m.bmb3377.android_photo_editor;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +22,7 @@ import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.load.engine.Resource;
 import com.mukesh.image_processing.ImageProcessor;
@@ -34,57 +38,61 @@ public class NewPhoto extends AppCompatActivity {
     protected LinearLayout galleryLayout;
     protected ImageView curr_image;
     protected PhotoEditorView new_image;
-    protected Bitmap edited_image;
-    protected ArrayList<Bitmap> edited;
+    protected Bitmap photo;
+    protected ArrayList<FilteredImageOption> edited;
     protected Button cancelButton;
     protected Button doneButton;
     protected RecyclerView imageFiltersRecyclerView;
     private static String TAG = "NewPhoto.java";
+    protected Handler handler;
+    protected Handler foregroundHandler;
+    private boolean paused;
+    private static final int DONE_LOADING = 100;
+    private ProgressDialog progressDialog;
 
+    class MyCallback implements Handler.Callback {
+
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case DONE_LOADING:
+                    imageFiltersRecyclerView = findViewById(R.id.photo_recycler_view);
+                    if(imageFiltersRecyclerView != null && edited != null) {
+                        progressDialog.dismiss();
+                        imageFiltersRecyclerView.setLayoutManager(new LinearLayoutManager(NewPhoto.this, LinearLayoutManager.HORIZONTAL, false));
+                        imageFiltersRecyclerView.setAdapter(new PhotoAdapter(NewPhoto.this, edited));
+                    }
+                    break;
+            }
+            return true;
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_photo);
-        edited = new ArrayList<Bitmap>();
-        Bitmap photo  = BitmapFactory.decodeByteArray(getIntent()
+        edited = new ArrayList<>();
+        photo  = BitmapFactory.decodeByteArray(getIntent()
                 .getByteArrayExtra("byteArray"),0,getIntent().getByteArrayExtra("byteArray").length);
         Log.d(TAG, "photo bitmap got created");
         curr_image = findViewById(R.id.curr_photo);
         curr_image.setImageBitmap(photo);
         curr_image.setScaleType(ImageView.ScaleType.FIT_XY);
-        edited_image = photo;
-        ImageProcessor imageProcessor = new ImageProcessor();
-        Bitmap b = imageProcessor.applyBlackFilter(photo);
-        edited.add(b);
 
-        edited.add(b);
-        edited.add(b);
-        edited.add(b);
-        edited.add(b);
-        edited.add(b);
-
-        imageFiltersRecyclerView = findViewById(R.id.photo_recycler_view);
-        imageFiltersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        imageFiltersRecyclerView.setAdapter(new PhotoAdapter(this, edited));
-//        imageFiltersRecyclerView.getLayoutParams().height = 80;
-//        imageFiltersRecyclerView.getLayoutParams().width = 60;
-//        edited_image = photo;
-//        ImageProcessor imageProcessor = new ImageProcessor();
-//        Bitmap b = photo;
-//        imageProcessor.applyBlackFilter(b);
-//        edited[0].setImageBitmap(b);
-//        imageProcessor.tintImage(edited_image, 5);
-//        edited[1].setImageBitmap(edited_image);
-//        imageProcessor.applyGaussianBlur(edited_image);
-//        edited[2].setImageBitmap(edited_image);
-//        imageProcessor.applySaturationFilter(edited_image, 5);
-//        edited[3].setImageBitmap(edited_image);
-//        imageProcessor.createContrast(edited_image, 3.5);
-//        edited[4].setImageBitmap(edited_image);
-//        imageProcessor.applySnowEffect(edited_image);
-//        edited[5].setImageBitmap(edited_image);
-//        imageProcessor.doInvert(edited_image);
-//        curr_image.setImageBitmap(edited_image);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading image filters...");
+        progressDialog.show();
+        MyCallback callback = new MyCallback();
+        foregroundHandler = new Handler(callback);
+        handler = new Handler();
+        Runnable r = new Runnable() {
+            public void run() {
+                loadImages();
+                foregroundHandler.obtainMessage(DONE_LOADING, true).sendToTarget();
+            }
+        };
+        handler.postDelayed(r, 1000);
 
         cancelButton = findViewById(R.id.cancel_button);
 
@@ -96,6 +104,30 @@ public class NewPhoto extends AppCompatActivity {
         });
 
         doneButton = findViewById(R.id.next_button);
+    }
+
+    private void loadImages() {
+        FilteredImageOption filteredImageOption = new FilteredImageOption("No Filter", photo);
+        edited.add(filteredImageOption);
+        ImageProcessor imageProcessor = new ImageProcessor();
+        Bitmap b = imageProcessor.applyBlackFilter(photo);
+        FilteredImageOption filteredImageOption1 = new FilteredImageOption("Black Filter", b);
+        edited.add(filteredImageOption1);
+        b = imageProcessor.emboss(photo);
+        FilteredImageOption filteredImageOption2 = new FilteredImageOption("Embossed Filter", b);
+        edited.add(filteredImageOption2);
+        b = imageProcessor.applySaturationFilter(photo, 5);
+        FilteredImageOption filteredImageOption3 = new FilteredImageOption("Saturated Filter", b);
+        edited.add(filteredImageOption3);
+        b = imageProcessor.applySnowEffect(photo);
+        FilteredImageOption filteredImageOption4 = new FilteredImageOption("Snowy Filter", b);
+        edited.add(filteredImageOption4);
+        b = imageProcessor.doGreyScale(photo);
+        FilteredImageOption filteredImageOption5 = new FilteredImageOption("GreyScale Filter", b);
+        edited.add(filteredImageOption5);
+        b = imageProcessor.doInvert(photo);
+        FilteredImageOption filteredImageOption6 = new FilteredImageOption("Inverted Filter", b);
+        edited.add(filteredImageOption6);
     }
 
     private void createDialog() {
